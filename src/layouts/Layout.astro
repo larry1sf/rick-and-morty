@@ -14,7 +14,7 @@ const { title } = Astro.props;
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/rick-logo.svg" />
-		<meta name="robots" content="*, index" />
+		<meta name="robots" content="*" />
 		<meta name="keywords" content="astro, practica de jsx y react" />
 		<meta
 			name="description"
@@ -30,15 +30,11 @@ const { title } = Astro.props;
 		<meta name="robots" content="index, follow" />
 		<ClientRouter />
 	</head>
-	<body class="bg-gray-300 dark:bg-black *:px-6 sm:*:px-12 md:*:px-32">
-		<header
-			class="bg-[url('/stars.svg')] bg-cover contrast-125"
-			role="banner"
-			id="home"
-		>
+	<body class="bg-black dark:bg-black *:px-6 sm:*:px-12 md:*:px-32">
+		<header class="bg-[url('/stars.svg')] bg-cover contrast-125" id="home">
 			<slot name="banner" />
 		</header>
-		<main role="main" id="explorar">
+		<main id="explorar" class="min-h-screen">
 			<slot name="main" />
 		</main>
 
@@ -58,5 +54,15 @@ const { title } = Astro.props;
 	*::selection {
 		background-color: rgb(125, 198, 240);
 		color: rgb(16, 32, 49);
+	}
+	@media (min-width: 1377px) and (max-width: 1500px) {
+		#filtros {
+			align-items: center;
+		}
+	}
+	@media (min-width: 917px) and (max-width: 1024px) {
+		#filtros {
+			align-items: center;
+		}
 	}
 </style>

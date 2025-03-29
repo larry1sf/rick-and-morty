@@ -18,14 +18,14 @@ export interface Result {
   name: string
   status: Status
   species: Species
-  type: string
-  gender: Gender
+  type?: string
+  gender?: Gender
   origin: Location
-  location: Location
+  location?: Location
   image: string
-  episode: string[]
-  url: string
-  created: Date
+  episode?: string[] | string
+  url?: string
+  created?: Date
 }
 export enum Gender {
   Female = 'Female',

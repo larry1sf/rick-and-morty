@@ -34,7 +34,7 @@ import Image from "astro/components/Image.astro";
                     <span>¡Explorar ahora!</span>
                 </a>
                 <a
-                    href="/#iniciar-sesion"
+                    href="#login"
                     title="iniciar sesión"
                     class="bg-gradient-to-br flex items-center space-x-2 from-slate-500 bg-gray-900 to-bg-slate-500 transition-all hover:shadow-lg hover:shadow-slate-500/50 hover:text-slate-300 px-4 py-1 rounded-3xl text-lg"
                 >
@@ -58,11 +58,11 @@ import Image from "astro/components/Image.astro";
     >
         <div class="w-full flex flex-row-reverse">
             <a
-                href="#favoritos"
+                href="/favoritos"
                 title="ir a favoritos"
                 class="bg-gradient-to-br flex items-center space-x-2 from-sky-400 to bg-sky-500 transition-all hover:shadow-lg hover:shadow-sky-500/50 hover:text-slate-300 px-4 py-1 rounded-3xl"
             >
-                <span><Icon name="corazon" class="size-5" /></span>
+                <span><Icon name="heart" class="size-5" /></span>
                 <span class="text-lg">Favoritos</span>
             </a>
         </div>
@@ -84,8 +84,5 @@ import Image from "astro/components/Image.astro";
 <style>
     #fondo-rick {
         mask-image: linear-gradient(rgb(15, 15, 15) 50%, transparent);
-    }
-    h2 {
-        word-spacing: 0.3rem;
     }
 </style>

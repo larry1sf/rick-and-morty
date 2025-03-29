@@ -14,7 +14,6 @@ export const IcoPersonaje = (props) => (
     />
   </svg>
 )
-
 export const IcoEpisodios = (props) => (
   <svg viewBox='0 0 20 19' fill='none' {...props}>
     <path
@@ -23,7 +22,6 @@ export const IcoEpisodios = (props) => (
     />
   </svg>
 )
-
 export const IcoPlaneta = (props) => (
   <svg viewBox='0 0 16 12' fill='none' {...props}>
     <path
@@ -51,7 +49,6 @@ export const IcoInfo = (props) => (
 export const IcoVida = (props) => (
   <svg {...props} fill='none'><path fill='#BFDE42' d='M14 6a.5.5 0 0 1-.5.5h-1.691l-2.361 4.724A.5.5 0 0 1 9 11.5h-.025a.5.5 0 0 1-.442-.321L4.959 1.798 2.955 6.207A.5.5 0 0 1 2.5 6.5h-2a.5.5 0 0 1 0-1h1.678L4.545.293a.5.5 0 0 1 .923.029l3.594 9.437 1.99-3.981A.5.5 0 0 1 11.5 5.5h2a.5.5 0 0 1 .5.5' /></svg>
 )
-
 export const IcoAlien = (props) => (
   <svg viewBox='0 0 12 14' fill='none' {...props}>
     <path
@@ -60,7 +57,6 @@ export const IcoAlien = (props) => (
     />
   </svg>
 )
-
 export const IcoHeart = (props) => (
   <svg viewBox='0 0 36 32' fill='none' {...props}>
     <path
@@ -87,3 +83,10 @@ export const IcoNotFound = (props) => {
     </svg>
   )
 }
+export const IconVolverArriba = (props) => (
+  <svg viewBox="0 0 32 32" fill="none" {...props}>
+    <path d="M16 31C24.2843 31 31 24.2843 31 16C31 7.71573 24.2843 1 16 1C7.71573 1 1 7.71573 1 16C1 24.2843 7.71573 31 16 31Z" stroke={props?.stroke ?? "#E4F4F4"} stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M10.7031 15.0469L16 9.75L21.2969 15.0469" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M16 22.25V9.75" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+)

@@ -3,7 +3,7 @@ import type { Collections, GroupResult } from "@/types/Filtros"
 import type { JSX } from "react"
 
 export const FilterCollection = (collection: Collections, searchFilter: string): GroupResult[] => {
-    const filterInclude = (collection: Collections, searchFilter: string) => collection.filter(e => e.name.toLowerCase().trim().match(searchFilter.toLowerCase()?.trim())) as GroupResult[]
+    const filterInclude = (collection: Collections, searchFilter: string) => collection.filter(e => e?.name.toLowerCase().trim().match(searchFilter.toLowerCase()?.trim())) as GroupResult[]
 
     if (collection?.length > 0) {
         let collectionUnify = filterInclude(collection, searchFilter)

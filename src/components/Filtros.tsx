@@ -1,4 +1,4 @@
-import { IcoEpisodios, IcoPersonaje, IcoLupa, IcoPlaneta, IcoTodos } from '@/assets/Icons'
+import { IcoEpisodios, IcoPersonaje, IcoLupa, IcoPlaneta, IcoTodos, IconVolverArriba } from '@/assets/Icons'
 import { sections } from '@/const/constantes'
 import Labels from '@components/sections/Labels'
 import React, { useEffect, useState, type JSX } from 'react'
@@ -7,20 +7,22 @@ import RenderFilter from '@/components/RenderFilter'
 
 const { person, episode, ubi, all } = sections
 
-export default function Filtros(): JSX.Element {
-  const [filtroSelected, setFiltroSelected] = useState<FiltroSelected>(all)
+export default function Filtros({ isFavorite }: { isFavorite?: boolean }): JSX.Element {
+  const [filtroSelected, setFiltroSelected] = useState<FiltroSelected>(all as FiltroSelected)
   const [searchFilter, setSearchFilter] = useState<string>('')
+
   useEffect(() => {
     const search = localStorage.getItem('search')
     const filtro = localStorage.getItem('filtrado')
     if (search) setSearchFilter(search)
-    if (filtro) setFiltroSelected(filtro)
+    if (filtro) setFiltroSelected(filtro as FiltroSelected)
   }, [])
+
   const handlerLocalStates = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.name === 'filtrado') {
       setFiltroSelected(() => {
         localStorage.setItem('filtrado', event.target.value)
-        return event.target.value
+        return event.target.value as FiltroSelected
       })
     } else {
       setSearchFilter(() => {
@@ -32,8 +34,8 @@ export default function Filtros(): JSX.Element {
 
   return (
     <>
-      <form className='flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-14'>
-        <div className='ps-0 flex w-full group lg:w-3/4'>
+      <form className='flex flex-col lg:flex-row  mb-14 bg-black/90 rounded-lg sticky top-2 z-50 py-4 shadow-lg shadow-slate-950/50 gap-y-2 lg:gap-y-0'>
+        <div className='group ps-0 mx-2 flex min-w-80 max-w-full lg:w-2/5 md:mx-0 '>
           <input
             type='text'
             name='search'
@@ -46,7 +48,7 @@ export default function Filtros(): JSX.Element {
           />
           <label
             htmlFor='search'
-            className='w-[10%] cursor-pointer flex items-center justify-center rounded-tr-3xl rounded-br-3xl bg-slate-500/50 group-hover:bg-slate-500/80 group-hover:text-slate-300 peer-focus:bg-slate-500/80 p-1.5 6px-2 lg:px-5 transition-all'
+            className='w-[10%] h-9 cursor-pointer flex items-center justify-center rounded-tr-3xl rounded-br-3xl bg-slate-500/50 group-hover:bg-slate-500/80 group-hover:text-slate-300 peer-focus:bg-slate-500/80 p-1.5 6px-2 lg:px-5 transition-all'
           >
             <span className='sr-only'>Lupa de búsqueda de los filtros</span>
             <IcoLupa className='size-5 min-w-5' />
@@ -54,11 +56,11 @@ export default function Filtros(): JSX.Element {
         </div>
         <div
           id='filtros'
-          className='flex flex-col md:flex-row md:items-center lg:justify-end lg:space-x-2 gap-y-2 md:gap-y-0 md:space-x-1 relative w-full'
+          className='flex flex-col md:flex-row px-2 md:items-start  items-start lg:space-x-2 gap-y-2 md:gap-y-0 space-x-1'
         >
-          <legend className='text-nowrap text-slate-200/80 relative top-1/2'> Filtrar por :</legend>
+          <legend className='text-nowrap text-slate-200/80'> Filtrar por :</legend>
           <fieldset
-            className='flex flex-wrap lg:flex-nowrap gap-3 icons-cards *:*:cursor-pointer *:*:transition-all'
+            className='flex flex-wrap gap-2 icons-cards *:*:cursor-pointer *:*:transition-all'
           >
             <Labels id={all} manejoEstado={{ filtroSelected, handlerLocalStates }}>
               <>
@@ -87,9 +89,7 @@ export default function Filtros(): JSX.Element {
           </fieldset>
         </div>
       </form>
-
-      <RenderFilter filtroSelected={filtroSelected} searchFilterInitial={searchFilter} />
-
+      <RenderFilter filtroSelected={filtroSelected} searchFilterInitial={searchFilter} isFavorite={isFavorite} />
     </>
   )
 }

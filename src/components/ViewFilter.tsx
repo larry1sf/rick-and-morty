@@ -1,19 +1,14 @@
 import type { FiltroSelected, RequestFilter } from "@/types/Filtros";
-import MainArea from "./sections/MainArea";
+import MainArea from "@components/sections/MainArea";
 import { sections, widthClases } from "@/const/constantes";
-import { CardsEpisodios, CardsUbicaciones } from "./cards/Cards";
-import { useEffect } from "react";
+import { CardsEpisodios, CardsUbicaciones, CardsPersonajes } from "@components/cards/Cards";
 import { DefaultNotFound } from "@/services/filtrado";
-import CardsPersonajes from "./cards/Personajes";
 const { person, episode, ubi } = sections
-export default function viewFilter({ contexto, data, updateArraySorted, searchFilterInitial }: { contexto: FiltroSelected, data: RequestFilter | undefined, updateArraySorted: any, searchFilterInitial: string }) {
-    let personajes, episodios, ubicaciones
-    (data) && ({ personajes, episodios, ubicaciones } = data)
-
+export default function viewFilter({ contexto, data, searchFilterInitial }: { contexto: FiltroSelected, data: RequestFilter | undefined, searchFilterInitial: string }) {
     const posibilidad = {
         personajes: (
             <MainArea key={person} title={person} widthGrid={widthClases.grande}>
-                {DefaultNotFound(personajes, searchFilterInitial, (personajes) => personajes
+                {DefaultNotFound(data?.personajes, searchFilterInitial, (personajes) => personajes
                     .map(({ id, name, status, species, origin, image }) =>
                         <CardsPersonajes
                             id={id}
@@ -26,21 +21,21 @@ export default function viewFilter({ contexto, data, updateArraySorted, searchFi
                     ))}
             </MainArea>
         ),
-        episodios: (
+        episodios: ( 
             <MainArea key={episode} title={episode} widthGrid={widthClases.mediano}>
-                {DefaultNotFound(episodios, searchFilterInitial, (episodios) => episodios
+                {DefaultNotFound(data?.episodios, searchFilterInitial, (episodios) => episodios
                     .map(({ id, name, episode }) => (
                         <CardsEpisodios
                             id={id}
                             key={id}
                             name={name}
-                            episode={episode.toString()} />
+                            episode={episode?.toString()} />
                     )))}
             </MainArea>
         ),
         ubicaciones: (
             <MainArea key={ubi} title={ubi} widthGrid={widthClases.pequeño}>
-                {DefaultNotFound(ubicaciones, searchFilterInitial, (ubicaciones) => ubicaciones
+                {DefaultNotFound(data?.ubicaciones, searchFilterInitial, (ubicaciones) => ubicaciones
                     .map(({ id, name, dimension }) =>
                         <CardsUbicaciones
                             id={id}
@@ -51,8 +46,6 @@ export default function viewFilter({ contexto, data, updateArraySorted, searchFi
             </MainArea>
         )
     }
-    useEffect(() => {
-        updateArraySorted()
-    }, [data])
+
     return posibilidad[contexto as keyof typeof posibilidad]
 }
