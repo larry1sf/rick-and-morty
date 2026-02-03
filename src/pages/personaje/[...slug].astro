@@ -1,0 +1,246 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import type { Character, Episode } from "@/types/api";
+import { fetchApi } from "@services/gets";
+import { IcoAlien, IcoGenero } from "assets/Icons";
+import {
+    GeneroDesconocido,
+    Desconocidos,
+    SpedieDesconocida,
+    StadoDesconocido,
+} from "@/const/constantes";
+import { Image } from "astro:assets";
+import ButtonVolver from "@/components/ui/ButtonVolver";
+import ListaCards from "@/components/cards/ListCards";
+export const prerender = false;
+const { slug } = Astro.params;
+const [name, id] = slug?.split("/") || ["", "1"].map((e) => e.trim());
+
+const user = (await fetchApi({
+    option: "character",
+    id,
+})) as Character;
+
+if (
+    !user ||
+    !user.id ||
+    name !== user.name.toLocaleLowerCase().replaceAll(" ", "-") ||
+    Number(id) !== user.id
+)
+    return Astro.redirect("/");
+
+const ids = user?.episode.map((e) => e.split("/").slice(-1)).join(",") || [];
+const episodes = (await fetchApi({
+    option: "episode",
+    id: ids,
+})) as Episode[];
+---
+
+<Layout title={`Personaje: ${user?.name}`}>
+    <div slot="main" class="w-full pt-24 pb-12 px-4 sm:px-6 min-h-screen">
+        <div class="max-w-6xl mx-auto">
+            <!-- Botón Volver -->
+            <div class="mb-12">
+                <ButtonVolver client:visible />
+            </div>
+
+            <!-- Header Section (Hero) -->
+            <header
+                class="relative overflow-hidden rounded-[2.5rem] bg-slate-900/60 border border-white/10 p-8 md:p-14 mb-16 backdrop-blur-2xl shadow-2xl shadow-black/50"
+            >
+                <!-- Background Decor -->
+                <div
+                    class="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"
+                >
+                </div>
+                <div
+                    class="absolute -bottom-24 -left-24 w-72 h-72 bg-sky-500/5 rounded-full blur-[80px] pointer-events-none"
+                >
+                </div>
+
+                <div
+                    class="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none"
+                >
+                    <IcoAlien className="size-80" />
+                </div>
+
+                <section
+                    class="relative z-10 flex flex-col md:flex-row gap-12 items-center md:items-start text-center md:text-left"
+                >
+                    <!-- Character Image -->
+                    <article class="relative group shrink-0">
+                        <div
+                            class="absolute -inset-4 bg-gradient-to-tr from-primary/30 to-sky-500/30 rounded-[2.5rem] blur-2xl opacity-50 group-hover:opacity-100 transition duration-1000"
+                        >
+                        </div>
+                        <figure
+                            class="relative overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl"
+                        >
+                            <Image
+                                loading="eager"
+                                width={300}
+                                height={300}
+                                class="object-cover aspect-square w-full md:w-80 group-hover:scale-110 transition-transform duration-700 ease-out"
+                                src={user?.image || ""}
+                                alt={user?.name || "Personaje"}
+                            />
+                            <!-- Image Overlay Label -->
+                            <figcaption
+                                class="absolute bottom-4 right-4 px-3 py-1 rounded bg-black/60 border border-white/10 text-[10px] font-mono text-white/70 backdrop-blur-md"
+                            >
+                                SCAN_RESULT: OK
+                            </figcaption>
+                        </figure>
+                    </article>
+
+                    <article class="space-y-8 flex-1">
+                        <section class="space-y-3">
+                            <div
+                                class="flex items-center justify-center md:justify-start gap-3"
+                            >
+                                <div class="h-px w-8 bg-primary/50"></div>
+                                <span
+                                    class="text-primary font-black uppercase tracking-[0.4em] text-[10px]"
+                                    >Expediente de Sujeto</span
+                                >
+                            </div>
+                            <h1
+                                class="text-4xl md:text-7xl font-black text-white leading-[1.1] drop-shadow-2xl"
+                            >
+                                {user?.name}
+                            </h1>
+                        </section>
+
+                        <section
+                            class="flex flex-wrap justify-center md:justify-start gap-4"
+                        >
+                            <div
+                                class="group/badge px-5 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-primary/40 transition-colors flex items-center gap-3 backdrop-blur-md"
+                            >
+                                <div
+                                    class={`size-2 rounded-full animate-pulse ${user?.status === "Alive" ? "bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]" : user?.status === "Dead" ? "bg-rose-400 shadow-[0_0_10px_rgba(251,113,133,0.5)]" : "bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.5)]"}`}
+                                >
+                                </div>
+                                <span
+                                    class="text-slate-300 text-sm font-black uppercase tracking-widest"
+                                >
+                                    {
+                                        StadoDesconocido(
+                                            user?.status || "Desconocido",
+                                        )
+                                    }
+                                </span>
+                            </div>
+                            <div
+                                class="px-5 py-2 rounded-xl bg-primary/10 border border-primary/20 flex items-center gap-3 backdrop-blur-md shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]"
+                            >
+                                <IcoAlien className="size-4 text-primary" />
+                                <span
+                                    class="text-primary text-sm font-black uppercase tracking-widest"
+                                >
+                                    {
+                                        SpedieDesconocida(
+                                            user?.species || "Desconocido",
+                                        )
+                                    }
+                                </span>
+                            </div>
+                            <div
+                                class="px-5 py-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3 backdrop-blur-md"
+                            >
+                                <IcoGenero className="size-4 text-primary/70" />
+                                <span
+                                    class="text-slate-300 text-sm font-black uppercase tracking-widest"
+                                >
+                                    {
+                                        GeneroDesconocido(
+                                            user?.gender || "Desconocido",
+                                        )
+                                    }
+                                </span>
+                            </div>
+                        </section>
+                    </article>
+                </section>
+
+                <!-- Stats Grid -->
+                <section
+                    class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 relative z-10"
+                >
+                    <div
+                        class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
+                    >
+                        <p
+                            class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
+                        >
+                            Origen
+                        </p>
+                        <p class="text-lg text-white font-bold truncate italic">
+                            {
+                                Desconocidos(user?.origin.name, "Planeta") ||
+                                    "Desconocido"
+                            }
+                        </p>
+                    </div>
+                    <div
+                        class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
+                    >
+                        <p
+                            class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
+                        >
+                            Ubicación Actual
+                        </p>
+                        <a
+                            href={`/ubicacion/${user?.location.url.split("/").pop()}`}
+                            class="text-lg group-hover/stat:text-primary/80 text-white font-bold transition-colors truncate italic block"
+                        >
+                            {
+                                Desconocidos(user?.location.name, "Planeta") ||
+                                    "Desconocido"
+                            }
+                        </a>
+                    </div>
+                    <div
+                        class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
+                    >
+                        <p
+                            class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
+                        >
+                            Apariciones
+                        </p>
+                        <p class="text-2xl text-white font-black">
+                            {user?.episode?.length || 0}
+                            <span
+                                class="text-xs uppercase font-black not-italic text-slate-600"
+                                >{
+                                    user?.episode?.length === 1
+                                        ? "Episodio"
+                                        : "Episodios"
+                                }</span
+                            >
+                        </p>
+                    </div>
+                    <div
+                        class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
+                    >
+                        <p
+                            class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
+                        >
+                            ID de Registro
+                        </p>
+                        <p class="text-2xl text-white font-mono font-bold">
+                            #{user?.id.toString().padStart(4, "0")}
+                        </p>
+                    </div>
+                </section>
+            </header>
+
+            <!-- Episodios Section -->
+            <ListaCards
+                client:visible
+                option="episode"
+                cards={Array.isArray(episodes) ? episodes : [episodes]}
+            />
+        </div>
+    </div></Layout
+>

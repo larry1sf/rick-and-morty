@@ -1,13 +1,212 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="608px" height="511px" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g><path style="opacity:1" fill="#010101" d="M -0.5,-0.5 C 202.167,-0.5 404.833,-0.5 607.5,-0.5C 607.5,169.833 607.5,340.167 607.5,510.5C 404.833,510.5 202.167,510.5 -0.5,510.5C -0.5,340.167 -0.5,169.833 -0.5,-0.5 Z"/></g>
-<g><path style="opacity:1" fill="#6e6e6e" d="M 460.5,55.5 C 462.337,55.6395 462.67,56.3061 461.5,57.5C 460.702,57.0431 460.369,56.3764 460.5,55.5 Z"/></g>
-<g><path style="opacity:1" fill="#6b6b6b" d="M 128.5,59.5 C 130.337,59.6395 130.67,60.3061 129.5,61.5C 128.702,61.0431 128.369,60.3764 128.5,59.5 Z"/></g>
-<g><path style="opacity:1" fill="#828282" d="M 88.5,82.5 C 90.337,82.6395 90.6704,83.3061 89.5,84.5C 88.7025,84.0431 88.3691,83.3764 88.5,82.5 Z"/></g>
-<g><path style="opacity:1" fill="#cbcbcb" d="M 37.5,131.5 C 39.337,131.639 39.6704,132.306 38.5,133.5C 37.7025,133.043 37.3691,132.376 37.5,131.5 Z"/></g>
-<g><path style="opacity:1" fill="#606060" d="M 35.5,148.5 C 37.337,148.639 37.6704,149.306 36.5,150.5C 35.7025,150.043 35.3691,149.376 35.5,148.5 Z"/></g>
-<g><path style="opacity:1" fill="#8b8b8b" d="M 114.5,157.5 C 116.337,157.639 116.67,158.306 115.5,159.5C 114.702,159.043 114.369,158.376 114.5,157.5 Z"/></g>
-<g><path style="opacity:1" fill="#868686" d="M 96.5,214.5 C 98.337,214.639 98.6704,215.306 97.5,216.5C 96.7025,216.043 96.3691,215.376 96.5,214.5 Z"/></g>
-<g><path style="opacity:1" fill="#7e7e7e" d="M 455.5,307.5 C 456.776,308.386 456.776,309.386 455.5,310.5C 454.438,309.575 454.438,308.575 455.5,307.5 Z"/></g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Definir diferentes tamaños de estrellas -->
+    <circle id="star-tiny" r="0.5" fill="white"/>
+    <circle id="star-small" r="1" fill="white"/>
+    <circle id="star-medium" r="1.5" fill="white"/>
+    <circle id="star-large" r="2" fill="white"/>
+    
+    <!-- Estrellas con brillo -->
+    <g id="star-glow">
+      <circle r="2" fill="white" opacity="0.8"/>
+      <circle r="4" fill="white" opacity="0.3"/>
+      <circle r="6" fill="white" opacity="0.1"/>
+    </g>
+  </defs>
+  
+  <!-- Fondo negro -->
+  <rect width="1920" height="1080" fill="#000000"/>
+  
+  <!-- Capa 1: Estrellas muy pequeñas y tenues (fondo) -->
+  <g opacity="0.3">
+    <use href="#star-tiny" x="145" y="89"/>
+    <use href="#star-tiny" x="892" y="156"/>
+    <use href="#star-tiny" x="1456" y="234"/>
+    <use href="#star-tiny" x="234" y="456"/>
+    <use href="#star-tiny" x="1678" y="567"/>
+    <use href="#star-tiny" x="567" y="678"/>
+    <use href="#star-tiny" x="1234" y="789"/>
+    <use href="#star-tiny" x="789" y="123"/>
+    <use href="#star-tiny" x="345" y="890"/>
+    <use href="#star-tiny" x="1567" y="345"/>
+    <use href="#star-tiny" x="678" y="234"/>
+    <use href="#star-tiny" x="1123" y="678"/>
+    <use href="#star-tiny" x="456" y="901"/>
+    <use href="#star-tiny" x="1789" y="456"/>
+    <use href="#star-tiny" x="901" y="567"/>
+    <use href="#star-tiny" x="234" y="789"/>
+    <use href="#star-tiny" x="1456" y="123"/>
+    <use href="#star-tiny" x="567" y="345"/>
+    <use href="#star-tiny" x="1678" y="890"/>
+    <use href="#star-tiny" x="789" y="234"/>
+    <use href="#star-tiny" x="123" y="567"/>
+    <use href="#star-tiny" x="1345" y="678"/>
+    <use href="#star-tiny" x="456" y="123"/>
+    <use href="#star-tiny" x="1567" y="789"/>
+    <use href="#star-tiny" x="678" y="456"/>
+    <use href="#star-tiny" x="1789" y="234"/>
+    <use href="#star-tiny" x="234" y="890"/>
+    <use href="#star-tiny" x="1123" y="345"/>
+    <use href="#star-tiny" x="890" y="678"/>
+    <use href="#star-tiny" x="345" y="123"/>
+    <use href="#star-tiny" x="1456" y="567"/>
+    <use href="#star-tiny" x="567" y="789"/>
+    <use href="#star-tiny" x="1678" y="123"/>
+    <use href="#star-tiny" x="789" y="456"/>
+    <use href="#star-tiny" x="123" y="234"/>
+    <use href="#star-tiny" x="1345" y="890"/>
+    <use href="#star-tiny" x="456" y="345"/>
+    <use href="#star-tiny" x="1567" y="678"/>
+    <use href="#star-tiny" x="678" y="567"/>
+    <use href="#star-tiny" x="1789" y="123"/>
+    <use href="#star-tiny" x="234" y="678"/>
+    <use href="#star-tiny" x="1123" y="234"/>
+    <use href="#star-tiny" x="890" y="890"/>
+    <use href="#star-tiny" x="345" y="456"/>
+    <use href="#star-tiny" x="1456" y="345"/>
+    <use href="#star-tiny" x="567" y="123"/>
+    <use href="#star-tiny" x="1678" y="789"/>
+    <use href="#star-tiny" x="789" y="567"/>
+    <use href="#star-tiny" x="123" y="890"/>
+    <use href="#star-tiny" x="1345" y="234"/>
+  </g>
+  
+  <!-- Capa 2: Estrellas pequeñas -->
+  <g opacity="0.5">
+    <use href="#star-small" x="312" y="145"/>
+    <use href="#star-small" x="1089" y="423"/>
+    <use href="#star-small" x="1523" y="678"/>
+    <use href="#star-small" x="423" y="234"/>
+    <use href="#star-small" x="1745" y="890"/>
+    <use href="#star-small" x="678" y="456"/>
+    <use href="#star-small" x="1312" y="123"/>
+    <use href="#star-small" x="890" y="567"/>
+    <use href="#star-small" x="234" y="789"/>
+    <use href="#star-small" x="1634" y="345"/>
+    <use href="#star-small" x="567" y="901"/>
+    <use href="#star-small" x="1201" y="234"/>
+    <use href="#star-small" x="789" y="678"/>
+    <use href="#star-small" x="345" y="123"/>
+    <use href="#star-small" x="1456" y="890"/>
+    <use href="#star-small" x="123" y="456"/>
+    <use href="#star-small" x="1567" y="567"/>
+    <use href="#star-small" x="456" y="789"/>
+    <use href="#star-small" x="1789" y="234"/>
+    <use href="#star-small" x="678" y="345"/>
+    <use href="#star-small" x="1123" y="678"/>
+    <use href="#star-small" x="890" y="123"/>
+    <use href="#star-small" x="234" y="567"/>
+    <use href="#star-small" x="1345" y="890"/>
+    <use href="#star-small" x="567" y="234"/>
+    <use href="#star-small" x="1678" y="456"/>
+    <use href="#star-small" x="789" y="789"/>
+    <use href="#star-small" x="123" y="345"/>
+    <use href="#star-small" x="1456" y="678"/>
+    <use href="#star-small" x="456" y="123"/>
+    <use href="#star-small" x="1567" y="890"/>
+    <use href="#star-small" x="678" y="567"/>
+    <use href="#star-small" x="1789" y="234"/>
+    <use href="#star-small" x="234" y="456"/>
+    <use href="#star-small" x="1123" y="789"/>
+    <use href="#star-small" x="890" y="345"/>
+    <use href="#star-small" x="345" y="678"/>
+    <use href="#star-small" x="1456" y="123"/>
+    <use href="#star-small" x="567" y="890"/>
+    <use href="#star-small" x="1678" y="567"/>
+    <use href="#star-small" x="789" y="234"/>
+    <use href="#star-small" x="123" y="678"/>
+    <use href="#star-small" x="1345" y="456"/>
+    <use href="#star-small" x="456" y="789"/>
+    <use href="#star-small" x="1567" y="345"/>
+    <use href="#star-small" x="678" y="123"/>
+    <use href="#star-small" x="1789" y="890"/>
+    <use href="#star-small" x="234" y="567"/>
+    <use href="#star-small" x="1123" y="234"/>
+    <use href="#star-small" x="890" y="678"/>
+  </g>
+  
+  <!-- Capa 3: Estrellas medianas -->
+  <g opacity="0.7">
+    <use href="#star-medium" x="460" y="55"/>
+    <use href="#star-medium" x="128" y="59"/>
+    <use href="#star-medium" x="88" y="82"/>
+    <use href="#star-medium" x="37" y="131"/>
+    <use href="#star-medium" x="35" y="148"/>
+    <use href="#star-medium" x="114" y="157"/>
+    <use href="#star-medium" x="96" y="214"/>
+    <use href="#star-medium" x="455" y="307"/>
+    <use href="#star-medium" x="1234" y="456"/>
+    <use href="#star-medium" x="567" y="789"/>
+    <use href="#star-medium" x="1678" y="234"/>
+    <use href="#star-medium" x="789" y="567"/>
+    <use href="#star-medium" x="234" y="890"/>
+    <use href="#star-medium" x="1456" y="345"/>
+    <use href="#star-medium" x="678" y="123"/>
+    <use href="#star-medium" x="1123" y="678"/>
+    <use href="#star-medium" x="890" y="234"/>
+    <use href="#star-medium" x="345" y="567"/>
+    <use href="#star-medium" x="1567" y="890"/>
+    <use href="#star-medium" x="456" y="456"/>
+    <use href="#star-medium" x="1789" y="789"/>
+    <use href="#star-medium" x="123" y="234"/>
+    <use href="#star-medium" x="1345" y="567"/>
+    <use href="#star-medium" x="567" y="345"/>
+    <use href="#star-medium" x="1678" y="678"/>
+    <use href="#star-medium" x="789" y="123"/>
+    <use href="#star-medium" x="234" y="890"/>
+    <use href="#star-medium" x="1456" y="234"/>
+    <use href="#star-medium" x="678" y="567"/>
+    <use href="#star-medium" x="1123" y="890"/>
+  </g>
+  
+  <!-- Capa 4: Estrellas grandes -->
+  <g opacity="0.8">
+    <use href="#star-large" x="1567" y="234"/>
+    <use href="#star-large" x="345" y="678"/>
+    <use href="#star-large" x="1234" y="890"/>
+    <use href="#star-large" x="789" y="345"/>
+    <use href="#star-large" x="123" y="567"/>
+    <use href="#star-large" x="1456" y="123"/>
+    <use href="#star-large" x="567" y="789"/>
+    <use href="#star-large" x="1678" y="456"/>
+    <use href="#star-large" x="234" y="234"/>
+    <use href="#star-large" x="1123" y="567"/>
+    <use href="#star-large" x="890" y="890"/>
+    <use href="#star-large" x="456" y="345"/>
+    <use href="#star-large" x="1789" y="678"/>
+    <use href="#star-large" x="678" y="123"/>
+    <use href="#star-large" x="1345" y="789"/>
+  </g>
+  
+  <!-- Capa 5: Estrellas brillantes (destacadas) -->
+  <g opacity="0.9">
+    <use href="#star-glow" x="1200" y="300"/>
+    <use href="#star-glow" x="400" y="600"/>
+    <use href="#star-glow" x="1600" y="800"/>
+    <use href="#star-glow" x="800" y="200"/>
+    <use href="#star-glow" x="300" y="900"/>
+    <use href="#star-glow" x="1400" y="500"/>
+    <use href="#star-glow" x="600" y="400"/>
+    <use href="#star-glow" x="1800" y="700"/>
+  </g>
+  
+  <!-- Estrellas adicionales distribuidas aleatoriamente -->
+  <g opacity="0.4">
+    <use href="#star-tiny" x="1712" y="92"/>
+    <use href="#star-tiny" x="92" y="512"/>
+    <use href="#star-tiny" x="1312" y="912"/>
+    <use href="#star-tiny" x="512" y="212"/>
+    <use href="#star-tiny" x="912" y="712"/>
+    <use href="#star-small" x="1512" y="412"/>
+    <use href="#star-small" x="412" y="812"/>
+    <use href="#star-small" x="812" y="112"/>
+    <use href="#star-small" x="212" y="612"/>
+    <use href="#star-small" x="1612" y="312"/>
+    <use href="#star-medium" x="712" y="912"/>
+    <use href="#star-medium" x="112" y="412"/>
+    <use href="#star-medium" x="1412" y="712"/>
+    <use href="#star-medium" x="612" y="212"/>
+    <use href="#star-medium" x="1012" y="612"/>
+  </g>
 </svg>

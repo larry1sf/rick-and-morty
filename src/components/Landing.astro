@@ -1,5 +1,6 @@
 ---
-import { Icon } from "astro-icon/components";
+import Button from "@components/ui/Button.tsx";
+import { IcoRickAndMorty, IcoHeart } from "assets/Icons";
 ---
 
 <section
@@ -9,45 +10,41 @@ import { Icon } from "astro-icon/components";
     <article
         class="row-start-1 z-20 md:col-start-1 md:col-end-2 flex flex-col justify-between relative"
     >
-        <a href="/" title="inicio de mi pagina" class="w-36 sm:w-40 h-auto">
-            <Icon
-                name="rick-logo"
-                title="rick and Morty"
-                class="size-full contrast-150 brightness-105 object-cover"
+        <a href="/" title="Multiverso de Rick y Morty" class="w-fit">
+            <IcoRickAndMorty
+                width={100}
+                title="Rick y Morty"
+                class="size-full contrast-150 brightness-105"
             />
         </a>
 
-        <div class="text-white size-fit md:space-y-14">
+        <div class="text-text size-fit md:space-y-14">
             <h1
-                class="font-extrabold text-3xl inline-block md:text-4xl lg:text-6xl w-3xs sm:w-2xs md:w-96 lg:w-[30rem] after:text-sky-500 after:content-['.'] after:absolute absolute top-30 sm:relative sm:top-0"
+                class="font-extrabold inline-block text-5xl lg:text-7xl w-3xs sm:w-2xs md:w-96 lg:w-[35rem] after:text-sky-500 after:content-['.'] after:absolute absolute top-30 sm:relative sm:top-0"
             >
-                Vamos a nuestro universo
+                Explora Nuestro Multiverso
             </h1>
 
             <div
                 class="flex space-x-4 *:min-w-[150px] *:justify-center size-fit *:text-nowrap relative top-20 flex-col space-y-6 sm:space-y-0 sm:flex-row sm:top-0"
             >
-                <a
-                    href="/#explorar"
-                    title="explorar"
-                    class="bg-gradient-to-br flex items-center space-x-2 from-sky-400 to bg-sky-500 transition-all hover:shadow-lg hover:shadow-sky-500/50 text-slate-50 hover:text-slate-200 px-4 py-1 rounded-3xl text-lg"
+                <Button
+                    isLink={{
+                        href: "/#explorar",
+                        title: "Vamos a explorar un universo",
+                    }}
+                    variantColor="primary"
+                    className=" bg-primary/20! border-primary/40! text-white! hover:bg-primary/30!"
                 >
-                    <span>¡Explorar ahora!</span>
-                </a>
-                <a
-                    href="#login"
-                    title="iniciar sesión"
-                    class="bg-gradient-to-br flex items-center space-x-2 from-slate-500 bg-gray-900 to-bg-slate-500 transition-all hover:shadow-lg hover:shadow-slate-500/50 text-slate-50 hover:text-slate-200 px-4 py-1 rounded-3xl text-lg"
-                >
-                    <span>Iniciar sesión</span>
-                </a>
+                    ¡Crear portal ahora!
+                </Button>
             </div>
         </div>
 
         <div
             class="relative -top-14 sm:-top-4 space-y-4 sm:space-y-8 w-80 sm:w-96 lg:w-[30rem] pb-4"
         >
-            <p class="text-lg sm:text-xl text-slate-100/85">
+            <p class="text-lg sm:text-xl text-text/90">
                 Personajes, localizaciones, episodios y mucho más.
             </p>
             <span
@@ -58,72 +55,64 @@ import { Icon } from "astro-icon/components";
         </div>
     </article>
 
-    <article class="row-start-1 col-span-1 md:col-span-2 flex flex-col">
-        <div class="w-full flex flex-row-reverse">
-            <a
-                href="/favoritos"
-                title="ir a ver los guardados en favoritos"
-                class="bg-gradient-to-br flex items-center space-x-2 from-sky-400 to bg-sky-500 transition-all hover:shadow-lg hover:shadow-sky-500/50 text-white hover:text-slate-300 px-4 py-1 rounded-3xl"
+    <article
+        class="row-start-1 col-span-1 md:col-span-2 flex flex-col justify-between"
+    >
+        <section class="w-full flex justify-end">
+            <Button
+                isLink={{
+                    href: "#",
+                    title: "ir a ver los guardados en favoritos",
+                }}
+                variantColor="primary"
+                className="group bg-primary/20! border-primary/40! text-white! hover:bg-primary/30!"
             >
-                <span><Icon name="heart" class="size-5" /></span>
-                <span class="text-lg">Favoritos</span>
-            </a>
-        </div>
-        <div class="w-full">
-            <div
-                class="w-full min-w-[200px] sm:min-w-0 h-[40vh] sm:h-[80vh] bg-[url('/fondo-rick.webp')] bg-no-repeat bg-cover scale-100 sm:scale-90 bg-position-[center_4rem] sm:bg-position-[-15rem_5rem] img-fixed"
-                style="mask-image: linear-gradient(rgb(15, 15, 15) 50%, transparent);"
-            >
-            </div>
-        </div>
+                <IcoHeart className="size-5" />
+                <span>Favoritos</span>
+            </Button>
+        </section>
+        <section class="w-full container-window">
+            <div id="window-image"></div>
+            <span id="window"></span>
+        </section>
     </article>
 </section>
+
 <style>
-    .img-fixed {
+    :root {
+        --window-height: 700px;
+    }
+    .container-window {
+        height: var(--window-height);
         position: relative;
-        &::before {
-            content: "";
+
+        #window-image {
+            background-image: url("/fondo-rick.svg");
+            background-position: 30% 50%;
+            background-repeat: no-repeat;
+            background-size: cover;
+            aspect-ratio: 1/1;
+            height: 100%;
+            width: 100%;
+        }
+
+        #window {
             position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            filter: blur(30px);
             background-color: rgb(0, 0, 0);
-            bottom: -24rem;
-            right: 0;
-            width: 20rem;
-            height: 20rem;
-            animation: big auto linear;
-            animation-timeline: scroll(root);
-            animation-range: 0 80vh;
-            mask-image: linear-gradient(
-                to bottom,
-                transparent,
-                rgb(15, 15, 15) 40%
-            );
+            animation: vanish-up auto linear both;
+            animation-timeline: scroll();
+            animation-range: 0 var(--window-height);
         }
     }
 
-    @keyframes big {
-        0% {
-            transform: scale(1.3, 1);
-        }
-        100% {
-            transform: scale(1.3, 12);
-        }
-    }
-
-    @media (min-width: 640px) {
-        .img-fixed::before {
-            bottom: -10rem;
-            right: 0;
-            width: 30rem;
-            height: 20rem;
-        }
-
-        @keyframes big {
-            0% {
-                transform: scale(1.3, 1);
-            }
-            100% {
-                transform: scale(1.3, 7);
-            }
+    @keyframes vanish-up {
+        to {
+            height: 100%;
         }
     }
 </style>
