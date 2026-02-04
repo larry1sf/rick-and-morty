@@ -1,4 +1,4 @@
-import { IcoLupa, IcoTodos, IcoPersonaje, IcoPlaneta, IcoEpisodios, IcoGenero, IcoAlien, IcoVida } from "assets/Icons";
+import { IcoLupa, IcoTodos, IcoPersonaje, IcoPlaneta, IcoEpisodios } from "assets/Icons";
 import type { Character, Episode, Location } from "@/types/api";
 import { useRef, useEffect, useMemo, useState, type JSX } from "react";
 import { sections } from "@/const/constantes";
