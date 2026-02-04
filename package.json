@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/react": "4.4.2",
+    "@astrojs/vercel": "^9.0.4",
     "@fontsource-variable/baloo-2": "5.1.1",
     "@tailwindcss/vite": "4.1.3",
     "@types/react": "19.2.10",
