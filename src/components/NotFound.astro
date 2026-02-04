@@ -1,0 +1,24 @@
+---
+import { IcoNotFound } from "assets/Icons";
+interface Props {
+  title?: string;
+  description?: string;
+  className?: string;
+}
+const {
+  className = "",
+  title = " Lo sentimos, no hay resultados",
+  description = "No pudimos encontrar lo que estás buscando. Por favor, intenta con otros términos de búsqueda o revisa si estas buscando algo coherente.",
+} = Astro.props;
+---
+
+<div
+  class="flex flex-col items-center justify-center text-center col-span-full"
+>
+  <div class="relative mb-6">
+    {/* Reemplaza con el código SVG de Search */}
+    <IcoNotFound className={`size-44 stroke-slate-300 ${className}`} />
+  </div>
+  <h2 class="text-2xl font-bold mb-2 text-text">{title}</h2>
+  <p class="text-slate-100/90 max-w-md mb-6 text-pretty">{description}</p>
+</div>

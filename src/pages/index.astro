@@ -1,16 +1,16 @@
 ---
-import Filtros from "@components/Filtros";
-import Landing from "@components/Landing.astro";
+import Landing from "@/components/Landing.astro";
+import Main from "@/components/Main.astro";
 import Layout from "@/layouts/Layout.astro";
 ---
 
-<Layout title="Pagina de inicio">
+<Layout>
     <div id="barra-progress"></div>
     <Landing slot="banner" />
-    <div slot="main" class="w-full">
-        <Filtros client:load />
-    </div>
+
+    <Main slot="main" />
 </Layout>
+
 <style>
     #barra-progress {
         position: fixed;

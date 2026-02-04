@@ -3,45 +3,76 @@ import "@/styles/global.css";
 import { ClientRouter } from "astro:transitions";
 import "@fontsource-variable/baloo-2";
 import Footer from "@/components/Footer.astro";
+import { meta } from "@/const/meta.ts";
 interface Props {
-	title: string;
+    title?: string;
+    description?: string;
 }
-const { title } = Astro.props;
+const { title, description = meta.description } = Astro.props;
+const {
+    title: ogTitle,
+    description: ogDescription,
+    image: ogImage,
+    type: ogType,
+    url: ogUrl,
+    locale: ogLocale,
+    siteName: ogSiteName,
+} = meta.openGraph;
+const {
+    title: twitterTitle,
+    description: twitterDescription,
+    image: twitterImage,
+    card: twitterCard,
+} = meta.twitter;
 ---
 
 <!doctype html>
-<html lang="es">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/rick-logo.svg" />
-		<meta name="robots" content="*" />
-		<meta name="keywords" content="astro, practica de jsx y react" />
-		<meta
-			name="description"
-			content="Pagina para practicar react y peticiones a anime con jsx"
-		/>
-		<title>Rick and Morty - {title}</title>
-		<meta
-			name="description"
-			content="Rick and Morty pagina para ver información de sus personajes, episodios, locaciones y mas..."
-		/>
-		<meta name="author" content="Larry Ceballos" />
-		<meta name="theme-color" content="#000" />
-		<meta name="robots" content="index, follow" />
-		<ClientRouter />
-	</head>
-	<body class="px-6 mx-auto max-w-5xl bg-black dark:bg-black">
-		<slot />
-		<header
-			class="bg-[url('/stars.svg')] bg-cover bg-fixed contrast-125"
-			id="home"
-		>
-			<slot name="banner" />
-		</header>
-		<main id="explorar" class="min-h-screen">
-			<slot name="main" />
-		</main>
-		<Footer />
-	</body>
+<html lang={meta.lang}>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href={meta.icons.favicon} />
+        <link rel="apple-touch-icon" href={meta.icons.appleTouchIcon} />
+        <title>
+            {title?.length ? `${title}${meta.titleTemplate}` : meta.title}
+        </title>
+        <meta name="description" content={description} />
+        <meta name="robots" content="*" />
+        <meta name="keywords" content={meta.keywords.join(", ")} />
+        <meta name="theme-color" content={meta.themeColor} />
+        <meta name="color-scheme" content={meta.colorScheme} />
+        <meta name="author" content={meta.author} />
+        <meta name="generator" content={Astro.generator} />
+
+        <!-- openGraph -->
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:description" content={ogDescription} />
+        <meta property="og:image" content={ogImage.url} />
+        <meta property="og:image:alt" content={ogImage.alt} />
+        <meta property="og:image:height" content={`${ogImage.height}px`} />
+        <meta property="og:image:width" content={`${ogImage.width}px`} />
+        <meta property="og:url" content={ogUrl} />
+        <meta property="og:type" content={ogType} />
+        <meta property="og:site_name" content={ogSiteName} />
+        <meta property="og:locale" content={ogLocale} />
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content={twitterCard} />
+        <meta name="twitter:title" content={twitterTitle} />
+        <meta name="twitter:description" content={twitterDescription} />
+        <meta name="twitter:image" content={twitterImage} />
+
+        <ClientRouter />
+    </head>
+    <body
+        class="px-6 mx-auto max-w-5xl bg-black dark:bg-black font-primary bg-[url('/stars.svg')] bg-cover bg-fixed contrast-110"
+    >
+        <header id="home">
+            <slot name="banner" />
+        </header>
+        <main class="min-h-screen">
+            <slot name="main" />
+        </main>
+        <Footer />
+    </body>
 </html>

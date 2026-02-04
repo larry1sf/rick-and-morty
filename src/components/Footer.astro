@@ -1,25 +1,27 @@
 ---
-import { Icon } from "astro-icon/components";
+import Button from "./ui/Button";
+import { IconVolverArriba, IcoRickAndMorty, IcoRow } from "assets/Icons";
+const path = Astro.url.pathname;
 ---
 
 <footer role="contentinfo" class="pb-4 text-white">
-    <div class="flex items-center justify-between my-6 sm:mt-10 sm:mb-14">
-        <a href="/" class="w-24 sm:w-36 h-auto contrast-150 brightness-105">
-            <Icon name="rick-logo" class="size-full" />
+    <div class="flex items-center justify-between my-6">
+        <a href="/" class="contrast-150 brightness-105">
+            <IcoRickAndMorty className="h-full" />
         </a>
-        <div>
-            <a
-                href="#explorar"
-                title="volver a arriba"
-                class="flex items-center space-x-2"
-            >
-                <span class="text-base sm:text-lg">Volver arriba</span>
-                <Icon
-                    name="volver-arriba"
-                    class="text-white text-xl sm:text-2xl"
-                /></a
-            >
-        </div>
+        <Button
+            className="group"
+            isLink={{ href: "/#explorar", title: "Ir a inicio" }}
+        >
+            <>
+                {
+                    path !== "/" && (
+                        <IcoRow className="text-primary size-5 rotate-0 group-hover:-translate-x-1 transition-transform duration-300" />
+                    )
+                }
+                <span class="text-base sm:text-sm">Volver a Explorar</span>
+            </>
+        </Button>
     </div>
 
     <div class="bg-white h-[1px] sm:h-[2px] rounded-full w-full"></div>

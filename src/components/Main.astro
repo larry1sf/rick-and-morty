@@ -1,0 +1,57 @@
+---
+import { fetchApi } from "@/services/gets";
+import Form from "@components/ui/Form.tsx";
+let dataInitial = {
+    character: {
+        results: [],
+        meta: {
+            count: 0,
+            pages: 0,
+            next: null,
+            prev: null,
+            page: 1,
+        },
+    },
+    location: {
+        results: [],
+        meta: {
+            count: 0,
+            pages: 0,
+            next: null,
+            prev: null,
+            page: 1,
+        },
+    },
+    episode: {
+        results: [],
+        meta: {
+            count: 0,
+            pages: 0,
+            next: null,
+            prev: null,
+            page: 1,
+        },
+    },
+};
+try {
+    const respuestaInit = await Promise.all([
+        fetchApi({ option: "character", page: 1 }),
+        fetchApi({ option: "location", page: 1 }),
+        fetchApi({ option: "episode", page: 1 }),
+    ]);
+
+    respuestaInit.forEach((res) => {
+        dataInitial[res?._option as keyof typeof dataInitial] = {
+            results: res?.results,
+            meta: { ...res?.info, page: 1 },
+        };
+    });
+} catch (error) {
+    console.error("Error al cargar los datos iniciales del Main", error);
+}
+---
+
+<div class="w-full">
+    <div class="pt-6" id="explorar"></div>
+    <Form dataInitial={dataInitial} client:load />
+</div>

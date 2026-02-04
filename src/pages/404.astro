@@ -1,0 +1,368 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Button from "@components/ui/Button.tsx";
+import { IcoRickAndMorty } from "assets/Icons";
+
+interface Props {
+    error: unknown;
+}
+const { error } = Astro.props;
+console.error(error instanceof Error ? error.message : "Error no identificado");
+---
+
+<Layout title="404 - Página No Encontrada">
+    <div
+        slot="main"
+        class="relative flex items-center justify-center min-h-screen overflow-hidden"
+    >
+        <!-- Animated Portal Background Effect -->
+        <div class="portal-container">
+            <div class="portal-ring portal-ring-1"></div>
+            <div class="portal-ring portal-ring-2"></div>
+            <div class="portal-ring portal-ring-3"></div>
+            <div class="portal-core"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div
+            class="relative z-10 flex flex-col items-center justify-center text-center px-6 max-w-3xl"
+        >
+            <!-- 404 Number with Glitch Effect -->
+            <div class="relative mb-8">
+                <h1
+                    class="error-code text-[clamp(8rem,20vw,16rem)] font-extrabold leading-none tracking-tighter"
+                >
+                    404
+                </h1>
+                <div class="glitch-overlay" aria-hidden="true">404</div>
+                <div class="glitch-overlay glitch-overlay-2" aria-hidden="true">
+                    404
+                </div>
+            </div>
+
+            <!-- Rick and Morty Logo -->
+            <div class="mb-8 animate-float">
+                <IcoRickAndMorty
+                    width={120}
+                    title="Rick y Morty"
+                    class="size-full contrast-150 brightness-105 drop-shadow-[0_0_20px_rgba(0,195,255,0.5)]"
+                />
+            </div>
+
+            <!-- Error Message Container with Glassmorphism -->
+            <div
+                class="glass-container mb-10 p-8 rounded-3xl backdrop-blur-xl border border-primary/30 bg-black/40 shadow-[0_0_40px_rgba(0,195,255,0.15)]"
+            >
+                <h2
+                    class="text-3xl md:text-4xl font-bold mb-4 text-text glow-text"
+                >
+                    ¡Wubba Lubba Dub Dub!
+                </h2>
+                <p class="text-lg md:text-xl text-slate-100/90 mb-2 max-w-2xl">
+                    Parece que te perdiste en el multiverso
+                </p>
+                <p class="text-base md:text-lg text-slate-300/80 max-w-xl">
+                    Esta dimensión no existe o fue destruida por Rick. Intenta
+                    volver al universo principal.
+                </p>
+            </div>
+
+            <!-- Call to Action Buttons -->
+            <div
+                class="flex flex-col sm:flex-row gap-4 items-center justify-center"
+            >
+                <Button
+                    isLink={{
+                        href: "/",
+                        title: "Volver al inicio del universo",
+                    }}
+                    variantColor="primary"
+                    className="bg-primary/20! border-primary/40! text-white! hover:bg-primary/30! min-w-[200px]"
+                >
+                    Volver al Universo Principal
+                </Button>
+
+                <Button
+                    isLink={{
+                        href: "/#explorar",
+                        title: "Explorar el Multiversos",
+                    }}
+                    variantColor="secondary"
+                    className="min-w-[200px]"
+                >
+                    Explorar Multiversos
+                </Button>
+            </div>
+
+            <!-- Fun Quote -->
+            <p
+                class="mt-12 text-sky-400 brightness-125 text-sm md:text-base italic animate-pulse-slow"
+            >
+                "A veces la ciencia es más arte que ciencia, Morty."
+            </p>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    /* Portal Animation */
+    .portal-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 600px;
+        height: 600px;
+        pointer-events: none;
+    }
+
+    .portal-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        border: 2px solid;
+        opacity: 0.3;
+    }
+
+    .portal-ring-1 {
+        width: 300px;
+        height: 300px;
+        border-color: rgb(0, 195, 255);
+        animation: portal-pulse 3s ease-in-out infinite;
+    }
+
+    .portal-ring-2 {
+        width: 450px;
+        height: 450px;
+        border-color: rgb(125, 198, 240);
+        animation: portal-pulse 3s ease-in-out infinite 1s;
+    }
+
+    .portal-ring-3 {
+        width: 600px;
+        height: 600px;
+        border-color: rgb(0, 195, 255);
+        animation: portal-pulse 3s ease-in-out infinite 2s;
+    }
+
+    .portal-core {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: radial-gradient(
+            circle,
+            rgba(0, 195, 255, 0.4) 0%,
+            rgba(0, 195, 255, 0) 70%
+        );
+        animation: portal-glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes portal-pulse {
+        0%,
+        100% {
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.3;
+        }
+    }
+
+    @keyframes portal-glow {
+        0% {
+            box-shadow: 0 0 40px rgba(0, 195, 255, 0.4);
+        }
+        100% {
+            box-shadow: 0 0 80px rgba(0, 195, 255, 0.6);
+        }
+    }
+
+    /* 404 Error Code Styling */
+    .error-code {
+        background: linear-gradient(
+            135deg,
+            rgb(0, 195, 255) 0%,
+            rgb(125, 198, 240) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 30px rgba(0, 195, 255, 0.5));
+        animation: glow-pulse 2s ease-in-out infinite alternate;
+    }
+
+    /* Glitch Effect Overlays */
+    .glitch-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        font-size: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+        background: linear-gradient(
+            135deg,
+            rgb(0, 195, 255) 0%,
+            rgb(125, 198, 240) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        opacity: 0.8;
+        animation: glitch-1 2.5s infinite;
+    }
+
+    .glitch-overlay-2 {
+        animation: glitch-2 3s infinite;
+        opacity: 0.6;
+    }
+
+    @keyframes glitch-1 {
+        0%,
+        100% {
+            transform: translate(0);
+        }
+        20% {
+            transform: translate(-2px, 2px);
+        }
+        40% {
+            transform: translate(-2px, -2px);
+        }
+        60% {
+            transform: translate(2px, 2px);
+        }
+        80% {
+            transform: translate(2px, -2px);
+        }
+    }
+
+    @keyframes glitch-2 {
+        0%,
+        100% {
+            transform: translate(0);
+        }
+        25% {
+            transform: translate(3px, -3px);
+        }
+        50% {
+            transform: translate(-3px, 3px);
+        }
+        75% {
+            transform: translate(3px, 3px);
+        }
+    }
+
+    /* Glow Text Effect */
+    .glow-text {
+        text-shadow:
+            0 0 10px rgba(0, 195, 255, 0.5),
+            0 0 20px rgba(0, 195, 255, 0.3),
+            0 0 30px rgba(0, 195, 255, 0.2);
+    }
+
+    @keyframes glow-pulse {
+        0% {
+            filter: drop-shadow(0 0 20px rgba(0, 195, 255, 0.4));
+        }
+        100% {
+            filter: drop-shadow(0 0 40px rgba(0, 195, 255, 0.7));
+        }
+    }
+
+    /* Float Animation */
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    /* Slow Pulse */
+    .animate-pulse-slow {
+        animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse-slow {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.6;
+        }
+    }
+
+    /* Glass Container Effect */
+    .glass-container {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .glass-container::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            45deg,
+            transparent 30%,
+            rgba(0, 195, 255, 0.1) 50%,
+            transparent 70%
+        );
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+        0% {
+            transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        100% {
+            transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+        .portal-container {
+            width: 400px;
+            height: 400px;
+        }
+
+        .portal-ring-1 {
+            width: 200px;
+            height: 200px;
+        }
+
+        .portal-ring-2 {
+            width: 300px;
+            height: 300px;
+        }
+
+        .portal-ring-3 {
+            width: 400px;
+            height: 400px;
+        }
+
+        .portal-core {
+            width: 100px;
+            height: 100px;
+        }
+    }
+</style>

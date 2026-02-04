@@ -1,0 +1,195 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { fetchApi } from "@/services/gets";
+import type { Character, Location } from "@/types/api";
+import { IcoPlaneta } from "assets/Icons";
+import Button from "@/components/ui/Button";
+import ListaCards from "@/components/cards/ListCards";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+const location = (await fetchApi({
+    option: "location",
+    id: id,
+})) as Location;
+if (!location || !id || Number(id) !== location.id) return Astro.redirect("/");
+
+const idResidents = location?.residents?.map(
+    (resident) => resident?.split("/").pop() || "",
+);
+const residents = (await fetchApi({
+    option: "character",
+    id: idResidents,
+})) as Character[];
+---
+
+<Layout title={`Ubicación: ${location.name}`}>
+    <div slot="main" class="w-full pt-24 pb-12 px-4 sm:px-6 min-h-screen">
+        <div class="max-w-6xl mx-auto">
+            <!-- Botón Volver -->
+            <div class="mb-12">
+                <Button
+                    isLink={{
+                        title: "Volver",
+                        href: "/#explorar",
+                    }}
+                    variantColor="secondary"
+                    className="group"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="size-4 transform group-hover:-translate-x-1 transition-transform duration-300"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2.5"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Volver
+                </Button>
+            </div>
+
+            <!-- Header Section -->
+            <header
+                class="relative overflow-hidden rounded-[2.5rem] bg-slate-900/60 border border-white/10 p-8 md:p-14 mb-16 backdrop-blur-2xl shadow-2xl shadow-black/50"
+            >
+                <!-- Background Decor -->
+                <div
+                    class="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"
+                >
+                </div>
+                <div
+                    class="absolute -bottom-24 -left-24 w-72 h-72 bg-sky-500/5 rounded-full blur-[80px] pointer-events-none"
+                >
+                </div>
+
+                <div
+                    class="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none"
+                >
+                    <IcoPlaneta className="size-80" />
+                </div>
+
+                <div
+                    class="relative z-10 flex flex-col md:flex-row gap-10 items-center md:items-start text-center md:text-left"
+                >
+                    <div class="relative group">
+                        <div
+                            class="absolute inset-0 bg-primary/30 rounded-3xl blur-2xl group-hover:bg-primary/40 transition-colors duration-500 opacity-50"
+                        >
+                        </div>
+                        <div
+                            class="relative bg-slate-800/80 p-8 rounded-[2rem] border border-white/10 shadow-inner"
+                        >
+                            <IcoPlaneta
+                                className="size-20 text-primary drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="space-y-6 flex-1">
+                        <div class="space-y-2">
+                            <div
+                                class="flex items-center justify-center md:justify-start gap-3"
+                            >
+                                <div class="h-px w-8 bg-primary/50"></div>
+                                <span
+                                    class="text-primary font-black uppercase tracking-[0.4em] text-[10px]"
+                                    >Portal de Coordenadas</span
+                                >
+                            </div>
+                            <h1
+                                transition:name={`name-location-${location.id}`}
+                                class="text-4xl md:text-7xl font-black text-white leading-[1.1] drop-shadow-2xl"
+                            >
+                                {location.name}
+                            </h1>
+                        </div>
+
+                        <div
+                            class="flex flex-wrap justify-center md:justify-start gap-4"
+                        >
+                            <span
+                                class="px-6 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-sm font-bold uppercase tracking-widest backdrop-blur-md"
+                            >
+                                {location.type}
+                            </span>
+                            <span
+                                class="px-6 py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-bold uppercase tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]"
+                            >
+                                {location.dimension}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div
+                    class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 relative z-10"
+                >
+                    <div
+                        class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
+                    >
+                        <p
+                            class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
+                        >
+                            Estado Cuántico
+                        </p>
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="size-2 rounded-full bg-emerald-400 animate-pulse"
+                            >
+                            </div>
+                            <p class="text-xl text-white font-black">ESTABLE</p>
+                        </div>
+                    </div>
+                    <div
+                        class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
+                    >
+                        <p
+                            class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
+                        >
+                            Población Detectada
+                        </p>
+                        <p class="text-2xl text-white font-black">
+                            {location?.residents?.length}
+                        </p>
+                    </div>
+                    <div
+                        class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
+                    >
+                        <p
+                            class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
+                        >
+                            Localizador ID
+                        </p>
+                        <p class="text-2xl text-white font-mono font-bold">
+                            #{location.id.toString().padStart(3, "0")}
+                        </p>
+                    </div>
+                    <div
+                        class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
+                    >
+                        <p
+                            class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
+                        >
+                            Firma de Materia
+                        </p>
+                        <p
+                            class="text-xl text-white font-bold uppercase tracking-tighter"
+                        >
+                            Normalizada
+                        </p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Residentes Grid -->
+            <ListaCards client:visible cards={residents} option="character" />
+        </div>
+    </div>
+</Layout>
