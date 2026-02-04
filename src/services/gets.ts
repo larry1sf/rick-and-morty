@@ -1,7 +1,5 @@
-import type { Character, Episode, Info, Location } from "@/types/api";
 import type { tFiltersOptionSlug } from "@/types/filters";
 
-// ... imports
 export async function fetchApi({
   option,
   id,

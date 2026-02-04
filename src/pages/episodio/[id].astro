@@ -18,15 +18,16 @@ const episode = (await fetchApi({
 })) as Episode;
 
 if (!episode || !id || Number(id) !== episode.id) return Astro.redirect("/");
+
 const idsCharacters = episode?.characters.map(
     (char) => char.split("/").pop() || "",
 );
+const parsedEpisode = parseEpisode(episode.episode);
 
 const characters = (await fetchApi({
     option: "character",
     id: idsCharacters,
 })) as Character[];
-const parsedEpisode = parseEpisode(episode.episode);
 ---
 
 <Layout title={`Episodio: ${episode.name}`}>
@@ -57,10 +58,10 @@ const parsedEpisode = parseEpisode(episode.episode);
                     <IcoEpisodios className="size-80" />
                 </div>
 
-                <div
+                <section
                     class="relative z-10 flex flex-col md:flex-row gap-10 items-center md:items-start text-center md:text-left"
                 >
-                    <div class="relative group">
+                    <article class="relative group">
                         <div
                             class="absolute inset-0 bg-primary/30 rounded-3xl blur-2xl group-hover:bg-primary/40 transition-colors duration-500 opacity-50"
                         >
@@ -72,9 +73,9 @@ const parsedEpisode = parseEpisode(episode.episode);
                                 className="size-20 text-primary drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"
                             />
                         </div>
-                    </div>
+                    </article>
 
-                    <div class="space-y-6 flex-1">
+                    <article class="space-y-6 flex-1">
                         <div class="space-y-2">
                             <div
                                 class="flex items-center justify-center md:justify-start gap-3"
@@ -97,24 +98,24 @@ const parsedEpisode = parseEpisode(episode.episode);
                             class="flex flex-wrap justify-center md:justify-start gap-4"
                         >
                             <span
-                                class="px-6 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-sm font-bold uppercase tracking-widest backdrop-blur-md"
+                                class="px-6 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-sm font-bold uppercase tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]"
                             >
-                                {episode.episode}
+                                Temporada {parsedEpisode.season}
                             </span>
                             <span
-                                class="px-6 py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-bold uppercase tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]"
+                                class="px-6 py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-bold uppercase tracking-widest backdrop-blur-md"
                             >
-                                {episode.air_date}
+                                Episodio {parsedEpisode.episode}
                             </span>
                         </div>
-                    </div>
-                </div>
+                    </article>
+                </section>
 
                 <!-- Stats Grid -->
-                <div
+                <section
                     class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 relative z-10"
                 >
-                    <div
+                    <article
                         class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
                     >
                         <p
@@ -123,10 +124,10 @@ const parsedEpisode = parseEpisode(episode.episode);
                             Temporada
                         </p>
                         <p class="text-2xl text-white font-black">
-                            0{parsedEpisode.season}
+                            {parsedEpisode.season}
                         </p>
-                    </div>
-                    <div
+                    </article>
+                    <article
                         class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
                     >
                         <p
@@ -137,8 +138,29 @@ const parsedEpisode = parseEpisode(episode.episode);
                         <p class="text-2xl text-white font-black">
                             {characters?.length ?? 0}
                         </p>
-                    </div>
-                    <div
+                    </article>
+                    <article
+                        class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
+                    >
+                        <p
+                            class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
+                        >
+                            Fecha Estreno
+                        </p>
+                        <p class="text-lg text-white font-bold leading-tight">
+                            {
+                                new Date(episode.air_date).toLocaleDateString(
+                                    "es-ES",
+                                    {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                    },
+                                )
+                            }
+                        </p>
+                    </article>
+                    <article
                         class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
                     >
                         <p
@@ -149,29 +171,8 @@ const parsedEpisode = parseEpisode(episode.episode);
                         <p class="text-2xl text-white font-mono font-bold">
                             #{episode.id.toString().padStart(3, "0")}
                         </p>
-                    </div>
-                    <div
-                        class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
-                    >
-                        <p
-                            class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
-                        >
-                            Fecha Estreno
-                        </p>
-                        <p class="text-lg text-white font-bold leading-tight">
-                            {
-                                new Date(episode.created).toLocaleDateString(
-                                    "es-ES",
-                                    {
-                                        day: "2-digit",
-                                        month: "long",
-                                        year: "numeric",
-                                    },
-                                )
-                            }
-                        </p>
-                    </div>
-                </div>
+                    </article>
+                </section>
             </header>
 
             <ListaCards client:visible cards={characters} option="character" />

@@ -58,7 +58,7 @@ export const meta = {
 
   // 🔹 Iconos
   icons: {
-    favicon: "/rick-logo.svg",
+    favicon: "/icon.svg",
     appleTouchIcon: "/fondo-rick.webp",
   },
 

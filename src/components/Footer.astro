@@ -9,21 +9,19 @@ const path = Astro.url.pathname;
         <a href="/" class="contrast-150 brightness-105">
             <IcoRickAndMorty className="h-full" />
         </a>
-        <div>
-            <Button
-                className="group"
-                isLink={{ href: "/#explorar", title: "Ir a inicio" }}
-            >
-                <>
-                    {
-                        path !== "/" && (
-                            <IcoRow className="text-primary size-5 rotate-0 group-hover:-translate-x-1 transition-transform duration-300" />
-                        )
-                    }
-                    <span class="text-base sm:text-sm">Volver a Explorar</span>
-                </>
-            </Button>
-        </div>
+        <Button
+            className="group"
+            isLink={{ href: "/#explorar", title: "Ir a inicio" }}
+        >
+            <>
+                {
+                    path !== "/" && (
+                        <IcoRow className="text-primary size-5 rotate-0 group-hover:-translate-x-1 transition-transform duration-300" />
+                    )
+                }
+                <span class="text-base sm:text-sm">Volver a Explorar</span>
+            </>
+        </Button>
     </div>
 
     <div class="bg-white h-[1px] sm:h-[2px] rounded-full w-full"></div>

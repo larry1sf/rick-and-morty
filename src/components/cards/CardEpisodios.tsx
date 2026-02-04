@@ -35,8 +35,7 @@ export default function CardEpisodios({ episode, name, id, air_date }: Props) {
                     <div className="flex flex-col gap-0.5">
                         <span
                             className="text-[10px] font-black uppercase tracking-[0.25em] text-primary/70 mb-0.5"
-                        >Ficha Técnica</span
-                        >
+                        >Ficha Técnica</span >
                         <span
                             className="text-text/90 font-mono font-bold text-xs bg-white/5 py-0.5 px-2 rounded-md border border-white/5"
                         >
@@ -76,8 +75,7 @@ export default function CardEpisodios({ episode, name, id, air_date }: Props) {
                         <div className="h-px w-4 bg-primary/40"></div>
                         <span
                             className="text-[10px] font-bold uppercase tracking-widest text-slate-500"
-                        >{episode}</span
-                        >
+                        >{episode}</span>
                     </div>
                     <h3
                         className="text-2xl font-black text-white group-hover:text-primary transition-colors duration-300 leading-tight line-clamp-2 drop-shadow-sm"
@@ -99,15 +97,13 @@ export default function CardEpisodios({ episode, name, id, air_date }: Props) {
                 <div className="flex flex-col">
                     <span
                         className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-0.5"
-                    >Index ID</span
-                    >
+                    >Index ID</span>
                     <div className="flex items-center gap-1.5">
                         <div className="size-1.5 rounded-full bg-primary animate-pulse">
                         </div>
                         <span
                             className="text-white font-mono font-bold text-sm tracking-tighter"
-                        >#{id.toString().padStart(3, "0")}</span
-                        >
+                        >#{id.toString().padStart(3, "0")}</span >
                     </div>
                 </div>
                 <Button

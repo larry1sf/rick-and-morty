@@ -1,4 +1,4 @@
-import type { Character, Episode, Location } from "./api";
+import type { Character, Episode, Location } from "@/types/api";
 
 export type tFiltersOptionLabel =
   | "personajes"

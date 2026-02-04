@@ -2,7 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import type { Character, Episode } from "@/types/api";
 import { fetchApi } from "@services/gets";
-import { IcoAlien, IcoGenero } from "assets/Icons";
+import { IcoAlien, IcoGenero, IcoExternalLink } from "assets/Icons";
 import {
     GeneroDesconocido,
     Desconocidos,
@@ -34,6 +34,16 @@ const episodes = (await fetchApi({
     option: "episode",
     id: ids,
 })) as Episode[];
+
+const getLink = (idUrl: string) =>
+    idUrl ? `/ubicacion/${idUrl.split("/").pop()}` : "/#explorar";
+const getTitle = (name: string) =>
+    name === "unknown" ? "Explorar nuevos horizontes" : `Ir a ${name}`;
+
+const userLocation = getLink(user?.location.url);
+const userOrigin = getLink(user?.origin.url);
+const userLocationTitle = getTitle(user?.location.name);
+const userOriginTitle = getTitle(user?.origin.name);
 ---
 
 <Layout title={`Personaje: ${user?.name}`}>
@@ -167,39 +177,51 @@ const episodes = (await fetchApi({
                 <section
                     class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 relative z-10"
                 >
-                    <div
+                    <a
+                        title={userOriginTitle}
+                        href={userOrigin}
                         class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
                     >
+                        <IcoExternalLink
+                            className="size-4 text-primary opacity-0 group-hover/stat:opacity-100 group-hover/stat:right-4 transition-all duration-300 absolute top-4 right-2"
+                        />
                         <p
                             class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
                         >
                             Origen
                         </p>
-                        <p class="text-lg text-white font-bold truncate italic">
+                        <p
+                            class="text-lg group-hover/stat:text-primary/80 text-white font-bold transition-colors truncate italic block"
+                        >
                             {
                                 Desconocidos(user?.origin.name, "Planeta") ||
                                     "Desconocido"
                             }
                         </p>
-                    </div>
-                    <div
-                        class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
+                    </a>
+                    <a
+                        title={userLocationTitle}
+                        href={userLocation}
+                        class="relative group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
                     >
+                        <IcoExternalLink
+                            className="size-4 text-primary opacity-0 group-hover/stat:opacity-100 group-hover/stat:right-4 transition-all duration-300 absolute top-4 right-2"
+                        />
+
                         <p
                             class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1.5 group-hover/stat:text-primary transition-colors"
                         >
                             Ubicación Actual
                         </p>
-                        <a
-                            href={`/ubicacion/${user?.location.url.split("/").pop()}`}
+                        <p
                             class="text-lg group-hover/stat:text-primary/80 text-white font-bold transition-colors truncate italic block"
                         >
                             {
                                 Desconocidos(user?.location.name, "Planeta") ||
                                     "Desconocido"
                             }
-                        </a>
-                    </div>
+                        </p>
+                    </a>
                     <div
                         class="group/stat bg-slate-950/40 rounded-3xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 backdrop-blur-sm"
                     >

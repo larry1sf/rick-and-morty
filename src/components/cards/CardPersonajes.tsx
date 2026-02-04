@@ -102,8 +102,7 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
                         <div className="flex flex-col">
                             <span
                                 className="text-[9px] font-bold uppercase tracking-widest text-slate-500"
-                            >Origen Conocido</span
-                            >
+                            >Origen Conocido</span>
                             <span className="text-sm font-medium italic line-clamp-1">
                                 {Desconocidos(origin?.name, "Origen")}
                             </span>
@@ -112,15 +111,14 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
                 </div>
 
                 <footer
-                    className="mt-6 pt-5 flex items-center justify-between border-t border-white/10"
+                    className="mt-6 pt-5 flex items-center justify-between gap-6 border-t border-white/10"
                 >
                     <div className="flex flex-col">
                         <span
                             className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-0.5"
-                        >Categoría</span
-                        >
+                        >Categoría</span>
                         <span
-                            className="text-white font-mono font-bold text-xs bg-white/5 py-0.5 px-2 rounded border border-white/5"
+                            className="text-white font-mono  font-bold text-xs bg-white/5 py-0.5 px-2 rounded border border-white/5  max-w-26 line-clamp-2"
                         >
                             {species.toUpperCase()}
                         </span>
