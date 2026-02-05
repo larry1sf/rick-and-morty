@@ -64,9 +64,11 @@ const {
 
         <ClientRouter />
     </head>
-    <body
-        class="px-6 mx-auto max-w-5xl bg-black dark:bg-black font-primary bg-[url('/stars.svg')] bg-cover bg-fixed contrast-110"
-    >
+    <body class="px-6 mx-auto max-w-5xl bg-black dark:bg-black font-primary">
+        <div
+            class="fixed inset-0 -z-10 bg-[url('/stars.svg')] bg-cover opacity-50 pointer-events-none"
+        >
+        </div>
         <header id="home">
             <slot name="banner" />
         </header>
