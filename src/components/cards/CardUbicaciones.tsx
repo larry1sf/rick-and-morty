@@ -8,7 +8,7 @@ export default function CardUbicaciones({ name, type, dimension, residents, id }
     return (
         <a
             href={`/ubicacion/${id}`}
-            className="group relative flex flex-col h-auto md:h-[320px] p-6 gap-5 bg-slate-900/40 backdrop-blur-2xl rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] overflow-hidden"
+            className="group relative flex flex-col h-auto md:h-[320px] p-6 gap-5 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] overflow-hidden"
         >
             {/* Background Decor */}
             <div

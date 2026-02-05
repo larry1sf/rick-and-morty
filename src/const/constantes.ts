@@ -12,16 +12,16 @@ export const Desconocidos = (ori?: string, text?: string) =>
   ori?.includes("unknown") ? `${text} desconocid@` : ori || "Desconocid@";
 
 export const SpedieDesconocida = (ori: string) => {
-  if (ori.includes("Human")) return "Humano";
-  if (ori.includes("Alien")) return "Extraterrestre";
-  if (ori.includes("unknown")) return "Desconocid@";
+  if (ori?.includes("Human")) return "Humano";
+  if (ori?.includes("Alien")) return "Extraterrestre";
+  if (ori?.includes("unknown")) return "Desconocid@";
   return ori;
 };
 
 export const StadoDesconocido = (ori: string) => {
-  if (ori.includes("unknown")) return "Desconocid@";
-  if (ori.includes("Alive")) return "Vivo";
-  if (ori.includes("Dead")) return "Muerto";
+  if (ori?.includes("unknown")) return "Desconocid@";
+  if (ori?.includes("Alive")) return "Vivo";
+  if (ori?.includes("Dead")) return "Muerto";
   return ori;
 };
 

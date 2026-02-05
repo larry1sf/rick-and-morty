@@ -1,6 +1,6 @@
 ---
 import { fetchApi } from "@/services/gets";
-import Form from "@components/ui/Form.tsx";
+import Sections from "@/components/ui/Sections";
 let dataInitial = {
     character: {
         results: [],
@@ -53,5 +53,5 @@ try {
 
 <div class="w-full">
     <div class="pt-6" id="explorar"></div>
-    <Form dataInitial={dataInitial} client:load />
+    <Sections dataInitial={dataInitial} client:load />
 </div>
