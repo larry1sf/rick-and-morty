@@ -4,13 +4,16 @@ import { useEffect, useState } from "react";
 
 export function useFavorites({ id, section }: { id: number, section: "character" | "location" | "episode" }) {
     const [isFavorite, setIsFavorite] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const { favoriteIds, deleteUsuario, setUsuario } = useFavoritesContext();
 
     useEffect(() => {
+        setIsLoading(true);
         if (favoriteIds) {
             if (favoriteIds[section]?.includes(`${id}`))
                 setIsFavorite(true);
         }
+        setIsLoading(false);
     }, [favoriteIds]);
 
     const handleFavorite = () => {
@@ -27,6 +30,7 @@ export function useFavorites({ id, section }: { id: number, section: "character"
 
     return {
         isFavorite,
+        isLoading,
         handleFavorite
     }
 }

@@ -6,7 +6,7 @@ import { useFavorites } from "@/hooks/useFavorites";
 interface Props extends Location { }
 
 export default function CardUbicaciones({ name, type, dimension, residents, id }: Props) {
-    const { isFavorite, handleFavorite } = useFavorites({ id, section: "location" })
+    const { isFavorite, isLoading, handleFavorite } = useFavorites({ id, section: "location" })
 
     return (
         <article
@@ -83,7 +83,13 @@ export default function CardUbicaciones({ name, type, dimension, residents, id }
                 </p>
                 <Button className={`px-4! py-2! rounded-full!  ${isFavorite ? "bg-red-500/10 hover:bg-red-500/10 hover:border-red-500/10 shadow-red-500/10 border-red-500/20 text-red-500" : "primary"}`} onClick={handleFavorite}>
                     <>
-                        <IcoHeart className="size-3.5" />
+                        {
+                            isLoading ? (
+                                <div className="size-3.5 animate-spin border-2 border-current border-t-transparent rounded-full"></div>
+                            ) : (
+                                <IcoHeart className="size-3.5" />
+                            )
+                        }
                         Favoritos
                     </>
                 </Button>

@@ -20,7 +20,7 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
             : status === "Dead"
                 ? "text-rose-400 bg-rose-400/10 border-rose-400/20"
                 : "text-sky-400 bg-sky-400/10 border-sky-400/20";
-    const { isFavorite, handleFavorite } = useFavorites({ id, section: "character" })
+    const { isFavorite, isLoading, handleFavorite } = useFavorites({ id, section: "character" })
 
     return (
         <article
@@ -114,7 +114,13 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
                     </div>
                     <Button className={`px-4! py-2! rounded-full!  ${isFavorite ? "bg-red-500/10 hover:bg-red-500/10 hover:border-red-500/10 shadow-red-500/10 border-red-500/20 text-red-500" : "primary"}`} onClick={handleFavorite}>
                         <>
-                            <IcoHeart className="size-3.5" />
+                            {
+                                isLoading ? (
+                                    <div className="size-3.5 animate-spin border-2 border-current border-t-transparent rounded-full"></div>
+                                ) : (
+                                    <IcoHeart className="size-3.5" />
+                                )
+                            }
                             Favoritos
                         </>
                     </Button>
