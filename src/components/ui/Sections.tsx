@@ -10,6 +10,7 @@ import { SkeletonCardPersonaje, SkeletonCardUbicacion, SkeletonCardEpisodio } fr
 import Pagination from "@components/ui/Pagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import FilterGroup from "@components/ui/FilterGroup";
+import { FavoritesProvider } from "@/context/favotivosContext";
 interface tMeta {
     count: number;
     pages: number;
@@ -46,8 +47,6 @@ export default function Sections({ dataInitial }: { dataInitial: propsForm }) {
     }
 
 
-
-
     return (
         <>
             <form
@@ -82,27 +81,15 @@ export default function Sections({ dataInitial }: { dataInitial: propsForm }) {
             <section>
                 {
                     query.section === "all" ? (
-                        <>
+                        Object.keys(dataInitial).map((sectionKey) => (
                             <SectionResults
-                                key="character"
-                                sectionKey="character"
+                                key={sectionKey}
+                                sectionKey={sectionKey as 'character' | 'location' | 'episode'}
                                 searchTerm={debouncedSearch}
-                                initialDataSection={dataInitial.character}
+                                initialDataSection={dataInitial[sectionKey as keyof typeof dataInitial]}
                             />
+                        ))
 
-                            <SectionResults
-                                key="episode"
-                                sectionKey="episode"
-                                searchTerm={debouncedSearch}
-                                initialDataSection={dataInitial.episode}
-                            />
-                            <SectionResults
-                                key="location"
-                                sectionKey="location"
-                                searchTerm={debouncedSearch}
-                                initialDataSection={dataInitial.location}
-                            />
-                        </>
                     ) : (
                         <SectionResults
                             key={query.section}
@@ -176,17 +163,17 @@ export function SectionResults<T>({
 
     const cards: Record<string, { classHeight: string, skeleton: JSX.Element, item: (item: any) => JSX.Element }> = {
         character: {
-            classHeight: "h-[120vh]",
+            classHeight: "min-h-[590px]",
             skeleton: <SkeletonCardPersonaje />,
             item: (item) => < CardPersonajes {...item} key={item.id} />
         },
         episode: {
-            classHeight: "h-[78vh]",
+            classHeight: "min-h-[370px]",
             skeleton: <SkeletonCardEpisodio />,
             item: (item) => <CardEpisodios {...item} key={item.id} />
         },
         location: {
-            classHeight: "h-[78vh]",
+            classHeight: "min-h-[370px]",
             skeleton: <SkeletonCardUbicacion />,
             item: (item) => <CardUbicaciones {...item} key={item.id} />
         },
@@ -244,36 +231,45 @@ export function SectionResults<T>({
 
 
     return (
-        <section className="space-y-8">
-            <div className="sticky top-30.5 z-50 flex items-center gap-6 backdrop-blur-xs bg-black/75 py-4">
-                <h2 className="text-3xl capitalize font-black text-white italic">
-                    {sections[sectionKey]}
+        <FavoritesProvider>
+            <section className="space-y-8">
+                <div className="sticky top-30.5 z-50 flex items-center gap-6 backdrop-blur-xs bg-black/75 py-4">
+                    <h2 className="text-3xl capitalize font-black text-white italic">
+                        {sections[sectionKey]}
 
-                </h2>
-                <div
-                    className="h-px flex-1 bg-gradient-to-r from-primary/50 via-primary/10 to-transparent"
-                >
+                    </h2>
+                    <div
+                        className="h-px flex-1 bg-gradient-to-r from-primary/50 via-primary/10 to-transparent"
+                    >
+                    </div>
                 </div>
-            </div>
-            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500 ${cards[sectionKey].classHeight}`}>
-                {loading
-                    ? Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
-                        <div key={`skeleton-${i}`}>
-                            {cards[sectionKey].skeleton}
-                        </div>
-                    ))
-                    : paginatedItems.map((item: any) => cards[sectionKey].item(item))
-                }
-            </div>
-            <Pagination
-                currentPage={localPage}
-                totalPages={totalPages}
-                hasPrev={hasPrev}
-                hasNext={hasNext}
-                onPrev={() => handlePaginationAction('prev')}
-                onNext={() => handlePaginationAction('next')}
-            />
-        </section>
+                <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500 ${cards[sectionKey].classHeight}`}>
+                    {loading
+                        ? Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
+                            <div key={`skeleton-${i}`}>
+                                {cards[sectionKey].skeleton}
+                            </div>
+                        ))
+                        : paginatedItems.length > 0 ? (
+                            paginatedItems.map((item: any) => cards[sectionKey].item(item))
+                        ) : (
+                            <div className="col-span-full flex items-center justify-center border-2 border-dashed border-white/5 rounded-3xl bg-white/[0.02] min-h-[200px]">
+                                <p className="text-slate-500 text-lg font-medium">No se encontraron {sections[sectionKey]} en esta dimensión.</p>
+                            </div>
+                        )
+                    }
+                </div>
+                <Pagination
+                    currentPage={localPage}
+                    totalPages={totalPages}
+                    hasPrev={hasPrev}
+                    hasNext={hasNext}
+                    onPrev={() => handlePaginationAction('prev')}
+                    onNext={() => handlePaginationAction('next')}
+                />
+            </section>
+        </FavoritesProvider>
+
     );
 }
 

@@ -26,3 +26,73 @@ body::selection {
 .focus-within\:shadow-lg:focus-within {
     --tw-shadow-color: var(--p-primary) !important;
 }
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(1deg);
+    }
+}
+
+@keyframes glow {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
+        filter: blur(80px);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(1.05);
+        filter: blur(100px);
+    }
+}
+
+@keyframes soft-pulse {
+
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+.animate-float {
+    animation: float 8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.animate-glow {
+    animation: glow 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-pulse-slow {
+    animation: soft-pulse 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes bounce-subtle {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-bounce-slow {
+    animation: bounce-subtle 5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
