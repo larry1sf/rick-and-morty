@@ -4,14 +4,17 @@ import {
     SpedieDesconocida,
     StadoDesconocido,
 } from "@/const/constantes";
-import { IcoPlaneta } from "assets/Icons";
+import { IcoHeart, IcoPlaneta } from "assets/Icons";
 import Button from "@/components/ui/Button";
+import useFavorites from "@/hooks/useFavorites";
 
 interface Props extends Character {
     numFavorites?: number[];
 }
 
+
 export default function CardPersonajes({ name, id, image, species, origin, status }: Props) {
+    const { isFavorite, handleFavorite } = useFavorites({ id, section: 'character' });
     const statusColor =
         status === "Alive"
             ? "text-emerald-400 bg-emerald-400/10 border-emerald-400/20"
@@ -19,9 +22,13 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
                 ? "text-rose-400 bg-rose-400/10 border-rose-400/20"
                 : "text-sky-400 bg-sky-400/10 border-sky-400/20";
 
+    const favoriteColor =
+        isFavorite
+            ? "text-red-500 bg-red-500/10 border-red-500/20"
+            : "text-primary bg-primary/10 border-primary/20";
+
     return (
-        <a
-            href={`/personaje/${name.toLowerCase().replaceAll(" ", "-")}/${id}`}
+        <article
             className="group relative flex flex-col h-auto md:h-[540px] bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] overflow-hidden"
             title={`Ver más sobre ${name}`}
         >
@@ -32,7 +39,7 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
             </div>
 
             {/* Image Container */}
-            <div className="relative h-72 overflow-hidden">
+            <header className="relative h-72 overflow-hidden">
                 <img
                     width={300}
                     height={300}
@@ -40,6 +47,20 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
                     alt={name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
+                {/* Favorites Button */}
+                <div className="absolute top-4 left-4 z-20">
+                    <button
+                        onClick={handleFavorite}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border transition-all duration-200 cursor-pointer ${favoriteColor}`}
+                    >
+                        <IcoHeart className={`transition-colors duration-200 size-3.5 ${isFavorite ? "text-red-500" : "text-primary"}`} />
+                        <span
+                            className={`text-[10px] font-black uppercase tracking-widest transition-colors duration-200 ${isFavorite ? "text-red-500" : "text-primary"}`}
+                        >
+                            Favoritos
+                        </span>
+                    </button>
+                </div>
 
                 {/* Status Overlay */}
                 <div className="absolute top-4 right-4 z-20">
@@ -72,11 +93,11 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
                     className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent opacity-80"
                 >
                 </div>
-            </div>
+            </header>
 
             {/* Content Area */}
             <div className="p-6 flex-1 flex flex-col justify-between relative z-10">
-                <div className="space-y-4">
+                <main className="space-y-4">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
                             <div className="h-px w-4 bg-primary/40"></div>
@@ -108,7 +129,7 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
                             </span>
                         </div>
                     </div>
-                </div>
+                </main>
 
                 <footer
                     className="mt-6 pt-5 flex items-center justify-between gap-6 border-t border-white/10"
@@ -124,7 +145,10 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
                         </span>
                     </div>
                     <Button
-                        as="div"
+                        isLink={{
+                            href: `/personaje/${name.toLowerCase().replaceAll(" ", "-")}/${id}`,
+                            title: `Perfil de ${name}`,
+                        }}
                         variantColor="primary"
                         className="px-5! py-2! rounded-full!"
                     >
@@ -146,6 +170,6 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
                 >
                 </div>
             </div>
-        </a>
+        </article>
     );
 }

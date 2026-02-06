@@ -1,0 +1,39 @@
+---
+import HeroFavorites from "@/components/HeroFavorites.astro";
+import Layout from "@/layouts/Layout.astro";
+import FavoritesSections from "@/components/ui/FavoritesSections";
+---
+
+<Layout>
+    <div id="barra-progress"></div>
+    <HeroFavorites slot="banner" />
+
+    <div slot="main" class="w-full">
+        <div class="pt-6" id="explorar"></div>
+        <FavoritesSections client:load />
+    </div>
+</Layout>
+
+<style>
+    #barra-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        width: 0%;
+        height: 0.5rem;
+        background: rgb(0, 195, 255);
+
+        animation: progress auto linear;
+        animation-timeline: scroll(root block);
+    }
+
+    @keyframes progress {
+        from {
+            width: 0%;
+        }
+        to {
+            width: 100%;
+        }
+    }
+</style>
