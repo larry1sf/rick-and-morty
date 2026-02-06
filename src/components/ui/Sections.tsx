@@ -11,6 +11,8 @@ import Pagination from "@components/ui/Pagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import FilterGroup from "@components/ui/FilterGroup";
 import { FavoritesProvider } from "@/context/favotivosContext";
+import NotFound from "@components/ui/NotFound";
+
 interface tMeta {
     count: number;
     pages: number;
@@ -33,9 +35,8 @@ interface propsForm {
     };
 }
 
-const ITEMS_PER_PAGE = 6;
 
-export default function Sections({ dataInitial }: { dataInitial: propsForm }) {
+export default function Sections({ dataInitial, itemsPerPage = 6 }: { dataInitial: propsForm, itemsPerPage?: number }) {
     const [query, setQuery] = useState({
         name: "",
         section: "all",
@@ -44,6 +45,114 @@ export default function Sections({ dataInitial }: { dataInitial: propsForm }) {
     const debouncedSearch = useDebounce(query.name, 500);
     const handleSectionChange = (section: string) => {
         setQuery(prev => ({ ...prev, section }));
+    }
+
+    const handleResetSearch = () => {
+        setQuery(prev => ({ ...prev, name: "" }));
+    }
+
+
+
+    const [data, setData] = useState(dataInitial)
+    const [loading, setLoading] = useState({ character: false, location: false, episode: false })
+
+    const getDataSection = async () => {
+        // Solo usamos los datos iniciales si no hay término de búsqueda
+        if (dataInitial && debouncedSearch === "") {
+            setData(dataInitial)
+            return
+        }
+
+        const section = query.section === "all" ? [
+            "character",
+            "location",
+            "episode"
+        ] : query.section;
+
+        setLoading(prev => ({ ...prev, [query.section]: true }))
+        try {
+            if (Array.isArray(section)) {
+                const [character, location, episode] = await Promise.all(section.map(async (section) => {
+                    return await fetchApi({
+                        option: section as 'character' | 'location' | 'episode',
+                        page: 1,
+                        name: debouncedSearch
+                    })
+                }))
+                const newData = {
+                    character: {
+                        results: character?.results || [],
+                        meta: { ...(character?.info || {}), page: 1 },
+                    },
+                    location: {
+                        results: location?.results || [],
+                        meta: { ...(location?.info || {}), page: 1 },
+                    },
+                    episode: {
+                        results: episode?.results || [],
+                        meta: { ...(episode?.info || {}), page: 1 },
+                    },
+                }
+                setData(newData)
+            } else {
+                const dataSection = await fetchApi({
+                    option: query.section as 'character' | 'location' | 'episode',
+                    page: 1,
+                    name: debouncedSearch
+                })
+
+                setData(prev => ({
+                    ...prev,
+                    [query.section]: {
+                        results: dataSection?.results || [],
+                        meta: { ...(dataSection?.info || {}), page: 1 },
+                    },
+                }))
+            }
+
+        } catch (error) {
+            console.error("Error al cargar los datos de la seccion " + query.section, error);
+        } finally {
+            setLoading(prev => ({ ...prev, [query.section]: false }))
+        }
+    }
+
+    useEffect(() => {
+        getDataSection();
+    }, [debouncedSearch]);
+
+    const handleLoading = (newState: boolean) => {
+        setLoading(prev => ({ ...prev, [query.section]: newState }))
+    }
+
+    const handleData = ({ sectionKey, newData, page }: { sectionKey: 'character' | 'location' | 'episode', newData: any, page: number }) => {
+        setData(prev => ({
+            ...prev,
+            [sectionKey]: {
+                results: [...prev[sectionKey].results, ...(newData.results || [])],
+                meta: { ...(newData.info || {}), page: page },
+            },
+        }))
+    }
+
+    const orderData = Object.keys(data).sort((a, b) => {
+        return data[b as keyof typeof data].results.length - data[a as keyof typeof data].results.length;
+    });
+    const isNotFount = Object.values(data).every(item => item.results.length === 0);
+
+    const stage: "all" | "unique" | "not found" | "error" =
+        isNotFount ? "not found" :
+            query.section === "all"
+                ? "all"
+                : query.section.includes("character")
+                    || query.section.includes("location")
+                    || query.section.includes("episode")
+                    ? "unique"
+                    : "error"
+
+    if (stage === "error") {
+        window.location.href = "/404"
+        return null
     }
 
 
@@ -80,24 +189,47 @@ export default function Sections({ dataInitial }: { dataInitial: propsForm }) {
 
             <section>
                 {
-                    query.section === "all" ? (
-                        Object.keys(dataInitial).map((sectionKey) => (
-                            <SectionResults
-                                key={sectionKey}
-                                sectionKey={sectionKey as 'character' | 'location' | 'episode'}
-                                searchTerm={debouncedSearch}
-                                initialDataSection={dataInitial[sectionKey as keyof typeof dataInitial]}
-                            />
-                        ))
 
-                    ) : (
-                        <SectionResults
-                            key={query.section}
-                            sectionKey={query.section as 'character' | 'location' | 'episode'}
-                            initialDataSection={dataInitial[query.section as 'character' | 'location' | 'episode']}
-                            searchTerm={debouncedSearch}
-                        />
-                    )
+                    (() => {
+                        switch (stage) {
+                            case "all":
+                                return (
+                                    orderData
+                                        .map((sectionKey) => (
+                                            <SectionResults
+                                                itemsPerPage={itemsPerPage}
+                                                key={sectionKey}
+                                                sectionKey={sectionKey as 'character' | 'location' | 'episode'}
+                                                searchTerm={debouncedSearch}
+                                                dataSection={data[sectionKey as keyof typeof data]}
+                                                inLoading={loading[sectionKey as keyof typeof loading]}
+                                                handleLoading={handleLoading}
+                                                handleData={handleData}
+                                            />
+                                        ))
+                                )
+                            case "unique":
+                                return (
+                                    <SectionResults
+                                        itemsPerPage={itemsPerPage}
+                                        sectionKey={query.section as 'character' | 'location' | 'episode'}
+                                        dataSection={data[query.section as keyof typeof data]}
+                                        searchTerm={debouncedSearch}
+                                        inLoading={loading[query.section as keyof typeof loading]}
+                                        handleLoading={handleLoading}
+                                        handleData={handleData}
+                                    />
+                                )
+                            case "not found":
+                                return (
+                                    <NotFound
+                                        onReset={handleResetSearch}
+                                        title="¡Hic! Dimensión Equivocada"
+                                        description="Parece que nos hemos teletransportado a un universo vacío. Ni siquiera Rick pudo encontrar lo que buscas aquí."
+                                    />
+                                )
+                        }
+                    })()
                 }
 
             </section>
@@ -110,57 +242,21 @@ export default function Sections({ dataInitial }: { dataInitial: propsForm }) {
 
 export function SectionResults<T>({
     sectionKey,
-    initialDataSection,
+    dataSection,
     searchTerm,
+    itemsPerPage,
+    inLoading,
+    handleLoading,
+    handleData
 }: {
     sectionKey: 'character' | 'location' | 'episode';
-    initialDataSection: { results: T[]; meta: tMeta };
+    dataSection: { results: T[]; meta: tMeta };
     searchTerm: string;
+    itemsPerPage: number;
+    inLoading: boolean;
+    handleLoading: (newState: boolean) => void;
+    handleData: ({ sectionKey, newData, page }: { sectionKey: 'character' | 'location' | 'episode', newData: any, page: number }) => void;
 }) {
-
-    const [data, setData] = useState(initialDataSection)
-    const [loading, setLoading] = useState(false)
-    const [localPage, setLocalPage] = useState(1)
-
-    const getDataSection = async () => {
-        // Solo usamos los datos iniciales si no hay término de búsqueda
-        if (initialDataSection && searchTerm === "") {
-            setData(initialDataSection)
-            return
-        }
-
-        setLoading(true)
-        try {
-            const data = await fetchApi({
-                option: sectionKey,
-                page: 1,
-                name: searchTerm
-            })
-
-            if (data) {
-                setData({
-                    results: data.results || [],
-                    meta: { ...(data.info || {}), page: 1 },
-                })
-            }
-        } catch (error) {
-            console.error("Error al cargar los datos de la seccion " + sectionKey, error);
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    useEffect(() => {
-        setLocalPage(1)
-        getDataSection()
-            .then(() => {
-                console.log("Peticion realizada de la seccion " + sectionKey);
-            })
-            .catch((error) => {
-                console.error("Error al cargar los datos de la seccion " + sectionKey, error);
-            })
-    }, [sectionKey, searchTerm])
-
     const cards: Record<string, { classHeight: string, skeleton: JSX.Element, item: (item: any) => JSX.Element }> = {
         character: {
             classHeight: "min-h-[590px]",
@@ -180,15 +276,16 @@ export function SectionResults<T>({
 
     }
 
-    const totalPages = Math.ceil(data.meta.count / ITEMS_PER_PAGE);
-    const startIndex = (localPage - 1) * ITEMS_PER_PAGE;
-    const paginatedItems = data.results.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const [localPage, setLocalPage] = useState(1)
+    const totalPages = Math.ceil(dataSection.meta.count / itemsPerPage);
+    const startIndex = (localPage - 1) * itemsPerPage;
+    const paginatedItems = dataSection.results.slice(startIndex, startIndex + itemsPerPage);
 
     const hasPrev = localPage > 1;
     const hasNext = localPage < totalPages;
 
     const handlePaginationAction = async (direction: 'next' | 'prev') => {
-        if (loading) return;
+        if (inLoading) return;
 
         const nextLocalPage = direction === 'next' ? localPage + 1 : localPage - 1;
 
@@ -196,13 +293,13 @@ export function SectionResults<T>({
         if (nextLocalPage > totalPages) return;
 
         if (direction === 'next') {
-            const requiredItems = nextLocalPage * ITEMS_PER_PAGE;
+            const requiredItems = nextLocalPage * itemsPerPage;
 
             // Si nos faltan datos y hay más en la API
-            if (requiredItems > data.results.length && data.meta.next) {
-                setLoading(true);
+            if (requiredItems > dataSection.results.length && dataSection.meta.next) {
+                handleLoading(true);
                 try {
-                    const nextApiPage = data.meta.page + 1;
+                    const nextApiPage = dataSection.meta.page + 1;
                     const newData = await fetchApi({
                         option: sectionKey,
                         page: nextApiPage,
@@ -210,18 +307,15 @@ export function SectionResults<T>({
                     });
 
                     if (newData) {
-                        setData(prev => ({
-                            results: [...prev.results, ...newData.results],
-                            meta: { ...newData.info, page: nextApiPage }
-                        }));
+                        handleData({ sectionKey, newData, page: nextApiPage });
                     }
                 } catch (error) {
                     console.error("Error al cargar más datos de la API", error);
                 } finally {
                     setTimeout(() => {
-                        setLoading(false);
+                        handleLoading(false);
 
-                    }, 3000);
+                    }, 500);
                 }
             }
         }
@@ -229,7 +323,10 @@ export function SectionResults<T>({
         setLocalPage(nextLocalPage);
     }
 
-
+    useEffect(() => {
+        setLocalPage(1)
+    }, [searchTerm, sectionKey])
+    if (dataSection.results.length === 0 && searchTerm.length > 0) return null
     return (
         <FavoritesProvider>
             <section className="space-y-8">
@@ -244,8 +341,8 @@ export function SectionResults<T>({
                     </div>
                 </div>
                 <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500 ${cards[sectionKey].classHeight}`}>
-                    {loading
-                        ? Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
+                    {inLoading
+                        ? Array.from({ length: itemsPerPage }).map((_, i) => (
                             <div key={`skeleton-${i}`}>
                                 {cards[sectionKey].skeleton}
                             </div>

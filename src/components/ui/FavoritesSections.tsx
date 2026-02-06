@@ -11,6 +11,7 @@ import { SkeletonCardEpisodio, SkeletonCardPersonaje, SkeletonCardUbicacion } fr
 import { useDebounce } from "@/hooks/useDebounce";
 import Pagination from "./Pagination";
 import EmptyState from "./EmptyState";
+import NotFound from "./NotFound";
 
 
 export default function WrapperFavoritesSections() {
@@ -31,6 +32,9 @@ function FavoritesSections() {
 
     const handleSectionChange = (section: string) => {
         setQuery(prev => ({ ...prev, section }));
+    };
+    const handleResetSearch = () => {
+        setQuery({ name: "", section: "all" });
     };
 
     const cards: Record<string, { classHeight: string, skeleton: JSX.Element, item: (item: any) => JSX.Element }> = {
@@ -100,16 +104,16 @@ function FavoritesSections() {
 
             <section className={`flex flex-col flex-1 ${stage !== "data" ? "items-center justify-center py-20" : "space-y-12 pb-12"}`}>
                 {stage === "empty" ? (
-                    <EmptyState
+                    <NotFound
                         title="Tu universo está vacío"
-                        message="Parece que aún no has guardado nada en tus favoritos. Explora el multiverso y guarda lo que más te guste."
-                        showButton={true}
+                        description="Parece que aún no has guardado nada en tus favoritos. Explora el multiverso y guarda lo que más te guste."
+                        onReset={handleResetSearch}
                     />
                 ) : stage === "no-results" ? (
-                    <EmptyState
+                    <NotFound
                         title="Sin coincidencias"
-                        message={`No encontramos ningún resultado para "${searchDebounce}" en tus favoritos.`}
-                        showButton={false}
+                        description={`No encontramos ningún resultado para "${searchDebounce}" en tus favoritos.`}
+                        onReset={handleResetSearch}
                     />
                 ) : (
                     orderSections.map((key) => {
