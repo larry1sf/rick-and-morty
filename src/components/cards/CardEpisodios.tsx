@@ -1,17 +1,20 @@
 import type { Episode } from "@/types/api";
-import { IcoEpisodios } from "assets/Icons";
+import { IcoEpisodios, IcoHeart } from "assets/Icons";
 import { parseEpisode } from "@/const/constantes";
 import Button from "@/components/ui/Button";
+import { useFavoritesContext } from "@/context/favotivosContext";
+import { cards } from "@components/cards/PackCards";
 
 interface Props extends Episode { }
 
-export default function CardEpisodios({ episode, name, id, air_date }: Props) {
+export default function CardEpisodios(props: Props) {
+    const { episode, name, id, air_date } = props;
     const parsed = parseEpisode(episode);
+    const { handleFavorite, isFavorite } = useFavoritesContext();
 
     return (
-        <a
-            href={`/episodio/${id}`}
-            className="group relative flex flex-col h-auto md:h-[320px] p-6 gap-5 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] overflow-hidden"
+        <article
+            className={`${cards["episode"].classHeight} group relative flex flex-col h-auto md:h-[370px] p-6 gap-5 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] overflow-hidden`}
         >
             {/* Background Decor */}
             <div
@@ -50,7 +53,9 @@ export default function CardEpisodios({ episode, name, id, air_date }: Props) {
                     </div>
                 </div>
 
-                <div
+                <a
+                    href={`/episodio/${id}`}
+                    title={`Ir a los detalles del episodio ${name}`}
                     className="bg-primary/10 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0"
                 >
                     <svg
@@ -66,7 +71,7 @@ export default function CardEpisodios({ episode, name, id, air_date }: Props) {
                             strokeWidth="2.5"
                             d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                     </svg>
-                </div>
+                </a>
             </header>
 
             <main className="flex-1 space-y-3 relative z-10">
@@ -89,6 +94,12 @@ export default function CardEpisodios({ episode, name, id, air_date }: Props) {
                 >
                     {parsed.display.split(" - ")[1]}
                 </p>
+                <Button className={`px-4! py-2! rounded-full!  ${isFavorite("episode", id) ? "bg-red-500/10 hover:bg-red-500/10 hover:border-red-500/10 shadow-red-500/10 border-red-500/20 text-red-500" : "primary"}`} onClick={() => handleFavorite("episode", props)}>
+                    <>
+                        <IcoHeart className="size-3.5" />
+                        Favoritos
+                    </>
+                </Button>
             </main>
 
             <footer
@@ -107,7 +118,10 @@ export default function CardEpisodios({ episode, name, id, air_date }: Props) {
                     </div>
                 </div>
                 <Button
-                    as="div"
+                    isLink={{
+                        href: `/episodio/${id}`,
+                        title: `Ir a los detalles del episodio ${name}`
+                    }}
                     variantColor="primary"
                     className="px-5! py-2! rounded-full!"
                 >
@@ -128,6 +142,6 @@ export default function CardEpisodios({ episode, name, id, air_date }: Props) {
                 >
                 </div>
             </div>
-        </a>
+        </article>
     );
 }

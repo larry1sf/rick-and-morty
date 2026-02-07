@@ -1,6 +1,16 @@
 ---
 import Button from "@components/ui/Button.tsx";
 import { IcoRickAndMorty, IcoHeart } from "assets/Icons";
+
+interface Props {
+    title?: string;
+    description?: string;
+}
+
+const {
+    title = "Tus Favoritos",
+    description = "Personajes, localizaciones, episodios y mucho más que has decidido guardar en tu colección.",
+} = Astro.props;
 ---
 
 <section
@@ -22,7 +32,7 @@ import { IcoRickAndMorty, IcoHeart } from "assets/Icons";
             <h1
                 class="font-extrabold inline-block text-5xl lg:text-7xl w-3xs sm:w-2xs md:w-96 lg:w-[35rem] after:text-sky-500 after:content-['.'] after:absolute absolute top-30 sm:relative sm:top-0"
             >
-                Explora Nuestro Multiverso
+                {title}
             </h1>
 
             <div
@@ -30,13 +40,13 @@ import { IcoRickAndMorty, IcoHeart } from "assets/Icons";
             >
                 <Button
                     isLink={{
-                        href: "/#explorar",
-                        title: "Vamos a explorar un universo",
+                        href: "#explorar",
+                        title: "Ver mis favoritos",
                     }}
                     variantColor="primary"
                     className=" bg-primary/20! border-primary/40! text-white! hover:bg-primary/30!"
                 >
-                    ¡Entra al multiverso!
+                    ¡Explora Tu Universo!
                 </Button>
             </div>
         </section>
@@ -44,8 +54,8 @@ import { IcoRickAndMorty, IcoHeart } from "assets/Icons";
         <section
             class="relative -top-14 sm:-top-4 space-y-4 sm:space-y-8 w-80 sm:w-96 lg:w-[30rem] pb-4"
         >
-            <p class="text-lg sm:text-xl text-text/90">
-                Personajes, localizaciones, episodios y mucho más.
+            <p class="text-lg sm:text-xl text-text/90 italic">
+                {description}
             </p>
             <span
                 class="text-sky-400 brightness-125 text-base sm:text-lg capitalize"
@@ -61,14 +71,28 @@ import { IcoRickAndMorty, IcoHeart } from "assets/Icons";
         <section class="w-full flex justify-end">
             <Button
                 isLink={{
-                    href: "/favoritos",
-                    title: "ir a ver los guardados en favoritos",
+                    href: "/",
+                    title: "Volver al inicio",
                 }}
                 variantColor="primary"
                 className="group bg-primary/20! border-primary/40! text-white! hover:bg-primary/30!"
             >
-                <IcoHeart className="size-4" />
-                <span>Favoritos</span>
+                <span class="flex items-center gap-2">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="size-4 group-hover:-translate-x-1 transition-transform"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Volver al Inicio
+                </span>
             </Button>
         </section>
         <section class="w-full container-window">

@@ -2,6 +2,8 @@
   "name": "rick-and-morty",
   "type": "module",
   "version": "0.0.2",
+  "author": "Larry",
+  "license": "MIT",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -19,7 +21,9 @@
     "@types/react-dom": "19.2.3",
     "astro": "5.17.1",
     "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
     "tailwindcss": "4.1.3"
   }
 }

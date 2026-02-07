@@ -56,7 +56,7 @@ export default function Pagination({
                 <div className="flex items-center gap-2 px-4 font-mono text-sm">
                     <span className="text-white font-bold">{currentPage}</span>
                     <span className="text-slate-600">/</span>
-                    <span className="text-slate-400">{totalPages}</span>
+                    <span className="text-slate-400">{totalPages || 1}</span>
                 </div>
 
                 <Button

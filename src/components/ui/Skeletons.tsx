@@ -1,6 +1,8 @@
+import { cards } from "@components/cards/PackCards";
+
 export function SkeletonCardPersonaje() {
     return (
-        <div className="flex flex-col h-auto md:h-[540px] bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden animate-pulse">
+        <div className={`${cards["character"].classHeight} flex flex-col h-auto md:h-[590px] bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden animate-pulse`}>
             <div className="h-72 bg-slate-800/50 w-full relative">
                 <div className="absolute top-4 right-4 h-8 w-24 bg-slate-700/40 rounded-full" />
                 <div className="absolute bottom-4 left-4 h-4 w-20 bg-slate-700/40 rounded" />
@@ -36,7 +38,7 @@ export function SkeletonCardPersonaje() {
 
 export function SkeletonCardUbicacion() {
     return (
-        <div className="flex flex-col h-auto md:h-[320px] p-6 gap-5 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden animate-pulse">
+        <div className={`${cards["location"].classHeight} flex flex-col h-auto md:h-[350px] p-6 gap-5 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden animate-pulse`}>
             <header className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
                     <div className="p-3 rounded-2xl bg-slate-800/80 border border-white/10 size-12" />
@@ -69,7 +71,7 @@ export function SkeletonCardUbicacion() {
 
 export function SkeletonCardEpisodio() {
     return (
-        <div className="flex flex-col h-auto md:h-[320px] p-6 gap-5 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden animate-pulse">
+        <div className={`${cards["episode"].classHeight} flex flex-col h-auto md:h-[350px] p-6 gap-5 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden animate-pulse`}>
             <header className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
                     <div className="p-3 rounded-2xl bg-slate-800/80 border border-white/10 size-12" />

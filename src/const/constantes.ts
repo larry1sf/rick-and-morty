@@ -9,7 +9,7 @@ export const sectionsInverse = Object.fromEntries(
 );
 
 export const Desconocidos = (ori?: string, text?: string) =>
-  ori?.includes("unknown") ? `${text} desconocid@` : ori || "Desconocid@";
+  ori?.includes("unknown") ? `Desconocid@` : ori || "Desconocid@";
 
 export const SpedieDesconocida = (ori: string) => {
   if (ori?.includes("Human")) return "Humano";
