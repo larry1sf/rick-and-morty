@@ -1,6 +1,6 @@
-import React from 'react';
-import styles from './NotFound.module.css';
 import { IcoNotFound } from "assets/Icons";
+import React from 'react';
+import styles from '@/styles/NotFound.module.css';
 import Button from "@components/ui/Button";
 
 interface NotFoundProps {

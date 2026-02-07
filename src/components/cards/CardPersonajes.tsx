@@ -6,25 +6,24 @@ import {
 } from "@/const/constantes";
 import { IcoHeart, IcoPlaneta } from "assets/Icons";
 import Button from "@components/ui/Button";
-import { useFavorites } from "@/hooks/useFavorites";
+import { useFavoritesContext } from "@/context/favotivosContext";
+import { cards } from "@components/cards/PackCards";
 
-interface Props extends Character {
-    numFavorites?: number[];
-}
+interface Props extends Character { }
 
-
-export default function CardPersonajes({ name, id, image, species, origin, status }: Props) {
+export default function CardPersonajes(props: Props) {
+    const { name, id, image, species, origin, status } = props;
     const statusColor =
         status === "Alive"
             ? "text-emerald-400 bg-emerald-400/10 border-emerald-400/20"
             : status === "Dead"
                 ? "text-rose-400 bg-rose-400/10 border-rose-400/20"
                 : "text-sky-400 bg-sky-400/10 border-sky-400/20";
-    const { isFavorite, isLoading, handleFavorite } = useFavorites({ id, section: "character" })
+    const { isFavorite, handleFavorite } = useFavoritesContext()
 
     return (
         <article
-            className="group relative flex flex-col h-auto md:h-[590px] bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] overflow-hidden"
+            className={`${cards["character"].classHeight} group relative flex flex-col h-auto md:h-[590px] bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] overflow-hidden`}
             title={`Ver más sobre ${name}`}
         >
             {/* Background Decor */}
@@ -112,15 +111,9 @@ export default function CardPersonajes({ name, id, image, species, origin, statu
                             </span>
                         </div>
                     </div>
-                    <Button className={`px-4! py-2! rounded-full!  ${isFavorite ? "bg-red-500/10 hover:bg-red-500/10 hover:border-red-500/10 shadow-red-500/10 border-red-500/20 text-red-500" : "primary"}`} onClick={handleFavorite}>
+                    <Button className={`px-4! py-2! rounded-full!  ${isFavorite('character', id) ? "bg-red-500/10 hover:bg-red-500/10 hover:border-red-500/10 shadow-red-500/10 border-red-500/20 text-red-500" : "primary"}`} onClick={() => handleFavorite('character', props)}>
                         <>
-                            {
-                                isLoading ? (
-                                    <div className="size-3.5 animate-spin border-2 border-current border-t-transparent rounded-full"></div>
-                                ) : (
-                                    <IcoHeart className="size-3.5" />
-                                )
-                            }
+                            <IcoHeart className="size-3.5" />
                             Favoritos
                         </>
                     </Button>

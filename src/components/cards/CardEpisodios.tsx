@@ -2,17 +2,19 @@ import type { Episode } from "@/types/api";
 import { IcoEpisodios, IcoHeart } from "assets/Icons";
 import { parseEpisode } from "@/const/constantes";
 import Button from "@/components/ui/Button";
-import { useFavorites } from "@/hooks/useFavorites";
+import { useFavoritesContext } from "@/context/favotivosContext";
+import { cards } from "@components/cards/PackCards";
 
 interface Props extends Episode { }
 
-export default function CardEpisodios({ episode, name, id, air_date }: Props) {
+export default function CardEpisodios(props: Props) {
+    const { episode, name, id, air_date } = props;
     const parsed = parseEpisode(episode);
-    const { isFavorite, isLoading, handleFavorite } = useFavorites({ id, section: "episode" })
+    const { handleFavorite, isFavorite } = useFavoritesContext();
 
     return (
         <article
-            className="group relative flex flex-col h-auto md:h-[370px] p-6 gap-5 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] overflow-hidden"
+            className={`${cards["episode"].classHeight} group relative flex flex-col h-auto md:h-[370px] p-6 gap-5 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] overflow-hidden`}
         >
             {/* Background Decor */}
             <div
@@ -92,15 +94,9 @@ export default function CardEpisodios({ episode, name, id, air_date }: Props) {
                 >
                     {parsed.display.split(" - ")[1]}
                 </p>
-                <Button className={`px-4! py-2! rounded-full!  ${isFavorite ? "bg-red-500/10 hover:bg-red-500/10 hover:border-red-500/10 shadow-red-500/10 border-red-500/20 text-red-500" : "primary"}`} onClick={handleFavorite}>
+                <Button className={`px-4! py-2! rounded-full!  ${isFavorite("episode", id) ? "bg-red-500/10 hover:bg-red-500/10 hover:border-red-500/10 shadow-red-500/10 border-red-500/20 text-red-500" : "primary"}`} onClick={() => handleFavorite("episode", props)}>
                     <>
-                        {
-                            isLoading ? (
-                                <div className="size-3.5 animate-spin border-2 border-current border-t-transparent rounded-full"></div>
-                            ) : (
-                                <IcoHeart className="size-3.5" />
-                            )
-                        }
+                        <IcoHeart className="size-3.5" />
                         Favoritos
                     </>
                 </Button>

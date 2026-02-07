@@ -4,6 +4,8 @@ import { ClientRouter } from "astro:transitions";
 import "@fontsource-variable/baloo-2";
 import Footer from "@/components/Footer.astro";
 import { meta } from "@/const/meta.ts";
+import { DialogProvider } from "@/context/DialogContext";
+
 interface Props {
     title?: string;
     description?: string;
@@ -69,12 +71,15 @@ const {
             class="fixed inset-0 -z-10 bg-[url('/stars.svg')] bg-cover opacity-50 pointer-events-none"
         >
         </div>
-        <header id="home">
-            <slot name="banner" />
-        </header>
-        <main class="min-h-screen">
-            <slot name="main" />
-        </main>
-        <Footer />
+
+        <DialogProvider client:load>
+            <header id="home">
+                <slot name="banner" />
+            </header>
+            <main class="min-h-screen">
+                <slot name="main" />
+            </main>
+            <Footer />
+        </DialogProvider>
     </body>
 </html>

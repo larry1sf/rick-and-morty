@@ -22,17 +22,27 @@ Este proyecto fue desarrollado para practicar y experimentar con tecnologías mo
 - **JavaScript**
 - **CSS**
 
-## 🤝 ¿Quieres colaborar o tienes sugerencias?
+## 🤝 Contribuciones
 
-¡Me encantaría escuchar tus ideas y propuestas para mejorar la página!  
-Puedes contactarme fácilmente a través del siguiente enlace:
+¡Las contribuciones son más que bienvenidas! Si tienes ideas, has encontrado un error o quieres mejorar alguna funcionalidad:
 
-- [Soporte o colaboraciones](https://universo-de-rick-y-morty.vercel.app/soporte)
+1. Haz un fork del proyecto.
+2. Crea una rama para tu mejora (`git checkout -b feature/NuevaMejora`).
+3. Haz un commit de tus cambios (`git commit -m 'Añade nueva funcionalidad'`).
+4. Haz un push a la rama (`git push origin feature/NuevaMejora`).
+5. Abre un Pull Request.
 
-## 📢 Contribuciones
+## 📄 Licencia / License
 
-Las contribuciones son bienvenidas. Si tienes alguna sugerencia, detectas errores o quieres agregar nuevas funcionalidades, no dudes en abrir un issue o un pull request.
+Este proyecto es **Open Source** y está bajo la licencia **MIT**. Eres libre de usarlo, copiarlo, modificarlo y distribuirlo. La licencia está disponible en ambos idiomas (Español e Inglés) en el archivo adjunto.
+
+This project is **Open Source** and licensed under the **MIT License**. You are free to use, copy, modify, and distribute it. The license is available in both languages (Spanish and English) in the attached file.
+
+[LICENSE](./LICENSE)
 
 ---
 
 ¡Gracias por visitar este proyecto! 🚀
+
+
+

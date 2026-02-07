@@ -1,17 +1,13 @@
 import { IcoLupa, IcoNotFound } from "assets/Icons";
-import { useState, type JSX } from "react";
+import { useMemo, useState } from "react";
 import Button from "@components/ui/Button";
 import FilterGroup from "@components/ui/FilterGroup";
-import CardPersonajes from "@/components/cards/CardPersonajes";
-import CardEpisodios from "@/components/cards/CardEpisodios";
-import CardUbicaciones from "@/components/cards/CardUbicaciones";
 import { sections } from "@/const/constantes";
 import { FavoritesProvider, useFavoritesContext } from "@/context/favotivosContext";
-import { SkeletonCardEpisodio, SkeletonCardPersonaje, SkeletonCardUbicacion } from "./Skeletons";
 import { useDebounce } from "@/hooks/useDebounce";
-import Pagination from "./Pagination";
-import EmptyState from "./EmptyState";
-import NotFound from "./NotFound";
+import Pagination from "@components/ui/Pagination";
+import NotFound from "@components/ui/NotFound";
+import { cards } from "@components/cards/PackCards";
 
 
 export default function WrapperFavoritesSections() {
@@ -37,24 +33,6 @@ function FavoritesSections() {
         setQuery({ name: "", section: "all" });
     };
 
-    const cards: Record<string, { classHeight: string, skeleton: JSX.Element, item: (item: any) => JSX.Element }> = {
-        character: {
-            classHeight: "min-h-[590px]",
-            skeleton: <SkeletonCardPersonaje />,
-            item: (item) => <CardPersonajes {...item} key={item.id} />
-        },
-        episode: {
-            classHeight: "min-h-[370px]",
-            skeleton: <SkeletonCardEpisodio />,
-            item: (item) => <CardEpisodios {...item} key={item.id} />
-        },
-        location: {
-            classHeight: "min-h-[370px]",
-            skeleton: <SkeletonCardUbicacion />,
-            item: (item) => <CardUbicaciones {...item} key={item.id} />
-        },
-    };
-
     const { isLoadingData, favoriteData } = useFavoritesContext();
 
     const filteredData = Object.fromEntries(
@@ -66,14 +44,22 @@ function FavoritesSections() {
         return filteredData[b].length - filteredData[a].length;
     });
 
-    const isGlobalEmpty = favoriteData.character.length === 0 && favoriteData.location.length === 0 && favoriteData.episode.length === 0;
-    const isSearchEmpty = !isGlobalEmpty && (
-        query.section === "all"
-            ? (filteredData.character.length === 0 && filteredData.location.length === 0 && filteredData.episode.length === 0)
-            : (filteredData[query.section].length === 0)
-    );
+    const isGlobalEmpty = Object.values(filteredData).every(arr => arr.length === 0);
 
-    const stage = isGlobalEmpty ? "empty" : isSearchEmpty ? "no-results" : "data";
+    const stage: "all" | "unique" | "not found" | "error" =
+        isGlobalEmpty ? "not found" :
+            query.section === "all"
+                ? "all"
+                : query.section.includes("character")
+                    || query.section.includes("location")
+                    || query.section.includes("episode")
+                    ? "unique"
+                    : "error"
+
+    if (stage === "error") {
+        window.location.href = "/404"
+        return null
+    }
 
     return (
         <div className="flex flex-col min-h-[70vh] gap-12">
@@ -102,56 +88,62 @@ function FavoritesSections() {
                 />
             </form>
 
-            <section className={`flex flex-col flex-1 ${stage !== "data" ? "items-center justify-center py-20" : "space-y-12 pb-12"}`}>
-                {stage === "empty" ? (
-                    <NotFound
-                        title="Tu universo está vacío"
-                        description="Parece que aún no has guardado nada en tus favoritos. Explora el multiverso y guarda lo que más te guste."
-                        onReset={handleResetSearch}
-                    />
-                ) : stage === "no-results" ? (
-                    <NotFound
-                        title="Sin coincidencias"
-                        description={`No encontramos ningún resultado para "${searchDebounce}" en tus favoritos.`}
-                        onReset={handleResetSearch}
-                    />
-                ) : (
-                    orderSections.map((key) => {
-                        const sectionKey = key as "character" | "location" | "episode";
-                        const hasData = filteredData[sectionKey].length > 0;
-                        const isSectionFilteredOut = searchDebounce && !hasData;
-
-                        if (isSectionFilteredOut && query.section === "all") return null;
-
-                        return (
-                            <FavoriteSectionResults
-                                data={filteredData[sectionKey as keyof typeof filteredData]}
-                                isLoading={isLoadingData[sectionKey as keyof typeof isLoadingData]}
-                                key={sectionKey}
-                                searchTerm={searchDebounce}
-                                sectionKey={sectionKey}
-                                cards={cards}
-                            />
-                        );
-                    })
-                )
+            <section className={`flex flex-col flex-1`}>
+                {
+                    stage === "all" && (
+                        orderSections?.map((key) => {
+                            const sectionKey = key as "character" | "location" | "episode";
+                            return (
+                                <FavoriteSectionResults
+                                    key={sectionKey}
+                                    data={filteredData[sectionKey as keyof typeof filteredData]}
+                                    isLoading={isLoadingData[sectionKey as keyof typeof isLoadingData]}
+                                    searchTerm={searchDebounce}
+                                    sectionKey={sectionKey}
+                                    cards={cards}
+                                />
+                            );
+                        })
+                    )
+                }
+                {
+                    stage === "unique" && (
+                        <FavoriteSectionResults
+                            key={query.section}
+                            data={filteredData[query.section as keyof typeof filteredData]}
+                            isLoading={isLoadingData[query.section as keyof typeof isLoadingData]}
+                            searchTerm={searchDebounce}
+                            sectionKey={query.section as "character" | "location" | "episode"}
+                            cards={cards}
+                        />
+                    )
+                }
+                {
+                    stage === "not found" && (
+                        <NotFound
+                            title="Tu universo está vacío"
+                            description="Parece que aún no has guardado nada en tus favoritos. Explora el multiverso y guarda lo que más te guste."
+                            onReset={handleResetSearch}
+                        />
+                    )
                 }
             </section>
         </div>
     );
 }
 
-function FavoriteSectionResults({ sectionKey, cards, searchTerm, data, isLoading }: {
+function FavoriteSectionResults({ sectionKey, cards, searchTerm, data, isLoading, items_per_page = 6 }: {
     sectionKey: 'character' | 'location' | 'episode',
     cards: any,
     data: any[],
     isLoading: boolean,
     searchTerm: string
+    items_per_page?: number;
 }) {
 
-    const items_per_page = 6;
+
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(isLoading ? 1 : Math.ceil(data.length / items_per_page));
+    const totalPages = useMemo(() => isLoading ? 1 : Math.ceil(data.length / items_per_page), [data, isLoading]);
 
     const inicioData = (page - 1) * items_per_page;
     const finData = page * items_per_page;
@@ -169,15 +161,6 @@ function FavoriteSectionResults({ sectionKey, cards, searchTerm, data, isLoading
         setPage(page - 1);
     };
 
-
-    // If we are searching and there's no data, we don't render this specific section
-    // because the parent will show the global "No matches" if everything is empty
-    if (searchTerm && data.length === 0) return null;
-
-    // However, if we are NOT searching and there's no data, we show the "No favorites yet" view
-    // (unless we are in 'all' view, where we might want to hide empty sections entirely if requested, 
-    // but the user said "mostra o las cards o la vista que tenia anteriormente")
-
     return (
         <section className="space-y-8">
             <div className="sticky top-30.5 z-50 flex items-center gap-6 backdrop-blur-xs bg-black/75 py-4">
@@ -190,7 +173,7 @@ function FavoriteSectionResults({ sectionKey, cards, searchTerm, data, isLoading
             {
                 isLoading ? (
                     <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500 ${cards[sectionKey].classHeight}`}>
-                        {Array.from({ length: 9 }).map((_, index) => (
+                        {Array.from({ length: items_per_page }).map((_, index) => (
                             <div key={index}>
                                 {cards[sectionKey].skeleton}
                             </div>

@@ -2,7 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import type { Character, Episode } from "@/types/api";
 import { fetchApi } from "@services/gets";
-import { IcoAlien, IcoGenero, IcoExternalLink } from "assets/Icons";
+import { IcoAlien, IcoGenero, IcoExternalLink, IcoRow } from "assets/Icons";
 import {
     GeneroDesconocido,
     Desconocidos,
@@ -10,8 +10,8 @@ import {
     StadoDesconocido,
 } from "@/const/constantes";
 import { Image } from "astro:assets";
-import ButtonVolver from "@/components/ui/ButtonVolver";
 import ListaCards from "@/components/cards/ListCards";
+import Button from "@/components/ui/Button";
 export const prerender = false;
 const { slug } = Astro.params;
 const [name, id] = slug?.split("/") || ["", "1"].map((e) => e.trim());
@@ -51,7 +51,20 @@ const userOriginTitle = getTitle(user?.origin.name);
         <div class="max-w-6xl mx-auto">
             <!-- Botón Volver -->
             <div class="mb-12">
-                <ButtonVolver client:visible />
+                <Button
+                    client:visible
+                    isLink={{
+                        title: "Volver",
+                        href: "/#explorar",
+                    }}
+                    variantColor="secondary"
+                    className="group"
+                >
+                    <IcoRow
+                        className="size-4 transform group-hover:-translate-x-1 transition-transform duration-300 stroke-primary text-primary"
+                    />
+                    Volver
+                </Button>
             </div>
 
             <!-- Header Section (Hero) -->

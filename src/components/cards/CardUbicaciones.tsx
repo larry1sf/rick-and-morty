@@ -1,16 +1,17 @@
 import type { Location } from "@/types/api";
 import { IcoHeart, IcoPlaneta } from "assets/Icons";
 import Button from "@/components/ui/Button";
-import { useFavorites } from "@/hooks/useFavorites";
-
+import { useFavoritesContext } from "@/context/favotivosContext";
+import { cards } from "@components/cards/PackCards";
 interface Props extends Location { }
 
-export default function CardUbicaciones({ name, type, dimension, residents, id }: Props) {
-    const { isFavorite, isLoading, handleFavorite } = useFavorites({ id, section: "location" })
+export default function CardUbicaciones(props: Props) {
+    const { name, type, dimension, residents, id } = props;
+    const { isFavorite, handleFavorite } = useFavoritesContext()
 
     return (
         <article
-            className="group relative flex flex-col h-auto md:h-[350px] p-6 gap-5 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] overflow-hidden"
+            className={`${cards["location"].classHeight} group relative flex flex-col h-auto md:h-[350px] p-6 gap-5 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] overflow-hidden`}
         >
             {/* Background Decor */}
             <div
@@ -81,15 +82,9 @@ export default function CardUbicaciones({ name, type, dimension, residents, id }
                 >
                     {dimension || "Desconocida"}
                 </p>
-                <Button className={`px-4! py-2! rounded-full!  ${isFavorite ? "bg-red-500/10 hover:bg-red-500/10 hover:border-red-500/10 shadow-red-500/10 border-red-500/20 text-red-500" : "primary"}`} onClick={handleFavorite}>
+                <Button className={`px-4! py-2! rounded-full!  ${isFavorite('location', id) ? "bg-red-500/10 hover:bg-red-500/10 hover:border-red-500/10 shadow-red-500/10 border-red-500/20 text-red-500" : "primary"}`} onClick={() => handleFavorite('location', props)}>
                     <>
-                        {
-                            isLoading ? (
-                                <div className="size-3.5 animate-spin border-2 border-current border-t-transparent rounded-full"></div>
-                            ) : (
-                                <IcoHeart className="size-3.5" />
-                            )
-                        }
+                        <IcoHeart className="size-3.5" />
                         Favoritos
                     </>
                 </Button>
