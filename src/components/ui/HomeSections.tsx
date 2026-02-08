@@ -9,7 +9,6 @@ import FilterGroup from "@components/ui/FilterGroup";
 import { FavoritesProvider } from "@/context/favotivosContext";
 import NotFound from "@components/ui/NotFound";
 import { cards } from "@components/cards/PackCards";
-
 interface tMeta {
     count: number;
     pages: number;
@@ -32,8 +31,17 @@ interface propsForm {
     };
 }
 
+interface tUser {
+    isLogin: boolean;
+    userId: string;
+}
+interface PropsHomeSections {
+    dataInitial: propsForm;
+    itemsPerPage?: number;
+    user: tUser;
+}
 
-export default function Sections({ dataInitial, itemsPerPage = 6 }: { dataInitial: propsForm, itemsPerPage?: number }) {
+export default function HomeSections({ dataInitial, itemsPerPage = 6, user }: PropsHomeSections) {
     const [query, setQuery] = useState({
         name: "",
         section: "all",
@@ -150,13 +158,16 @@ export default function Sections({ dataInitial, itemsPerPage = 6 }: { dataInitia
         return null
     }
 
-
     return (
-        <FavoritesProvider>
+        <FavoritesProvider user={{
+            isLogin: user.isLogin,
+            userId: user.userId,
+        }}>
 
             <form
                 onSubmit={(e) => e.preventDefault()}
-                className="flex flex-col md:flex-row sticky top-0 z-60 md:space-y-0 space-y-4 gap-4 py-10! bg-black/75 backdrop-blur-xs lg:gap-y-0"
+                id="explorar"
+                className="flex flex-col md:flex-row sticky top-0 z-60 md:space-y-0 space-y-4 gap-4 py-6 bg-black/75 backdrop-blur-xs lg:gap-y-0"
             >
                 <input type="hidden" value={query.section} />
                 <div className="flex relative h-9.5 text-sm rounded-3xl group ps-0 w-full lg:w-4/12 focus-within:shadow-lg border border-primary/50 focus-within:border-primary transition-all">
@@ -225,8 +236,6 @@ export default function Sections({ dataInitial, itemsPerPage = 6 }: { dataInitia
                 }
             </section>
         </FavoritesProvider>
-
-
     );
 }
 
@@ -252,7 +261,7 @@ export function SectionResults<T>({
     const [localPage, setLocalPage] = useState(1)
     const totalPages = Math.ceil(dataSection.meta.count / itemsPerPage);
     const startIndex = (localPage - 1) * itemsPerPage;
-    const paginatedItems = dataSection.results.slice(startIndex, startIndex + itemsPerPage);
+    const paginatedItems = dataSection.results?.slice(startIndex, startIndex + itemsPerPage);
 
     const hasPrev = localPage > 1;
     const hasNext = localPage < totalPages;
@@ -269,7 +278,7 @@ export function SectionResults<T>({
             const requiredItems = nextLocalPage * itemsPerPage;
 
             // Si nos faltan datos y hay más en la API
-            if (requiredItems > dataSection.results.length && dataSection.meta.next) {
+            if (requiredItems > dataSection.results?.length && dataSection.meta.next) {
                 handleLoading(true);
                 try {
                     const nextApiPage = dataSection.meta.page + 1;
@@ -302,7 +311,7 @@ export function SectionResults<T>({
     if (dataSection.results.length === 0 && searchTerm.length > 0) return null
     return (
         <section className="space-y-8">
-            <div className="sticky top-30.5 z-50 flex items-center gap-6 backdrop-blur-xs bg-black/75 py-4">
+            <div className="sticky top-22.5 z-50 flex items-center gap-6 backdrop-blur-xs bg-black/75 py-4">
                 <h2 className="text-3xl capitalize font-black text-white italic">
                     {sections[sectionKey]}
 

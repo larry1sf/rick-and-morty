@@ -5,6 +5,7 @@ import "@fontsource-variable/baloo-2";
 import Footer from "@/components/Footer.astro";
 import { meta } from "@/const/meta.ts";
 import { DialogProvider } from "@/context/DialogContext";
+import Header from "@/components/Header.astro";
 
 interface Props {
     title?: string;
@@ -20,6 +21,7 @@ const {
     locale: ogLocale,
     siteName: ogSiteName,
 } = meta.openGraph;
+
 const {
     title: twitterTitle,
     description: twitterDescription,
@@ -66,20 +68,53 @@ const {
 
         <ClientRouter />
     </head>
+
     <body class="px-6 mx-auto max-w-5xl bg-black dark:bg-black font-primary">
+        <div id="barra-progress"></div>
         <div
             class="fixed inset-0 -z-10 bg-[url('/stars.svg')] bg-cover opacity-50 pointer-events-none"
         >
         </div>
 
         <DialogProvider client:load>
-            <header id="home">
-                <slot name="banner" />
-            </header>
-            <main class="min-h-screen">
-                <slot name="main" />
+            <Header />
+
+            <main>
+                <article>
+                    <slot name="banner" />
+                </article>
+
+                <article class="min-h-screen">
+                    <slot name="main" />
+                </article>
             </main>
+
             <Footer />
         </DialogProvider>
     </body>
 </html>
+
+<style>
+    #barra-progress {
+        height: 10px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        width: 0%;
+        height: 0.5rem;
+        background: var(--color-primary);
+        transition: all 0.2s ease-in-out;
+        animation: progress auto linear;
+        animation-timeline: scroll(root block);
+    }
+
+    @keyframes progress {
+        from {
+            width: 0%;
+        }
+        to {
+            width: 100%;
+        }
+    }
+</style>

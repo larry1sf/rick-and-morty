@@ -22,6 +22,7 @@ const residents = (await fetchApi({
     option: "character",
     id: idResidents,
 })) as Character[];
+const { isAuthenticated, userId } = Astro.locals.auth();
 ---
 
 <Layout title={`Ubicación: ${location.name}`}>
@@ -189,7 +190,15 @@ const residents = (await fetchApi({
             </header>
 
             <!-- Residentes Grid -->
-            <ListaCards client:visible cards={residents} option="character" />
+            <ListaCards
+                user={{
+                    isLogin: isAuthenticated,
+                    userId: userId!,
+                }}
+                client:visible
+                cards={residents}
+                option="character"
+            />
         </div>
     </div>
 </Layout>

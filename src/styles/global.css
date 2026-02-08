@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-    --color-primary: oklch(68.5% 0.169 237.323);
-    --color-secondary: oklch(44.6% 0.043 257.281);
+    --color-primary: oklab(76.46300000000001% -0.09845 -0.11512);
+    --color-secondary: oklab(87.371% -0.17083 0.14774);
     --color-text: oklch(92.9% 0.013 255.508);
     --font-primary: "Baloo 2 Variable", "sans-serif";
 }

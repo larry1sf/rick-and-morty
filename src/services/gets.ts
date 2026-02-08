@@ -27,7 +27,20 @@ export async function fetchApi({
     const baseUrl = 'https://rickandmortyapi.com/api/'
     const url = `${baseUrl}${optionSearch}${idSearch}${queryString}`;
 
-    const response = await fetch(url);
+    // Usar AbortController para timeouts
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+
+    const response = await fetch(url, {
+      signal: controller.signal,
+      // Añadir cache headers para mejorar rendimiento
+      headers: {
+        'Cache-Control': 'max-age=300', // 5 minutos de cache
+      }
+    });
+
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
       console.error(`API Error: ${response.status} ${response.statusText} at ${url}`);
       return null;

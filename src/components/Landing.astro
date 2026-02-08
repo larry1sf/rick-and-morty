@@ -1,80 +1,56 @@
 ---
 import Button from "@components/ui/Button.tsx";
-import { IcoRickAndMorty, IcoHeart } from "assets/Icons";
+interface Props {
+    buttonPrincipal?: string;
+    title?: string;
+}
+const {
+    buttonPrincipal = "¡Entra al multiverso! ",
+    title = " Explora Nuestro Multiverso",
+} = Astro.props;
 ---
 
 <section
     id="banner"
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 pt-12 h-screen"
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 py-12 h-[90vh]"
 >
     <article
         class="row-start-1 z-20 md:col-start-1 md:col-end-2 flex flex-col justify-between relative"
     >
-        <a href="/" title="Multiverso de Rick y Morty" class="w-fit">
-            <IcoRickAndMorty
-                width={100}
-                title="Rick y Morty"
-                class="size-full contrast-150 brightness-105"
-            />
-        </a>
-
-        <section class="text-text size-fit md:space-y-14">
+        <header class="flex flex-col gap-16">
             <h1
-                class="font-extrabold inline-block text-5xl lg:text-7xl w-3xs sm:w-2xs md:w-96 lg:w-[35rem] after:text-sky-500 after:content-['.'] after:absolute absolute top-30 sm:relative sm:top-0"
+                class="font-extrabold text-white inline-block text-5xl lg:text-7xl w-3xs sm:w-2xs md:w-96 lg:w-[35rem] after:text-sky-500 after:content-['.'] after:absolute absolute top-30 sm:relative sm:top-0 mt-32"
             >
-                Explora Nuestro Multiverso
+                {title}
             </h1>
 
-            <div
-                class="flex space-x-4 *:min-w-[150px] *:justify-center size-fit *:text-nowrap relative top-20 flex-col space-y-6 sm:space-y-0 sm:flex-row sm:top-0"
+            <Button
+                isLink={{
+                    href: "/#explorar",
+                    title: "Vamos a explorar un universo",
+                }}
+                variantColor="primary"
+                className=" bg-primary/20! py-3! max-w-fit border-primary/40! text-white! hover:bg-primary/30!"
             >
-                <Button
-                    isLink={{
-                        href: "/#explorar",
-                        title: "Vamos a explorar un universo",
-                    }}
-                    variantColor="primary"
-                    className=" bg-primary/20! border-primary/40! text-white! hover:bg-primary/30!"
-                >
-                    ¡Entra al multiverso!
-                </Button>
-            </div>
-        </section>
+                {buttonPrincipal}
+            </Button>
+        </header>
+        <footer class="space-y-6">
+            <slot name="desc" />
 
-        <section
-            class="relative -top-14 sm:-top-4 space-y-4 sm:space-y-8 w-80 sm:w-96 lg:w-[30rem] pb-4"
-        >
-            <p class="text-lg sm:text-xl text-text/90">
-                Personajes, localizaciones, episodios y mucho más.
-            </p>
             <span
-                class="text-sky-400 brightness-125 text-base sm:text-lg capitalize"
+                class="text-primary brightness-125 text-base sm:text-lg capitalize"
             >
                 Wubba Lubba Dub Dub!
             </span>
-        </section>
+        </footer>
     </article>
 
-    <article
-        class="row-start-1 col-span-1 md:col-span-2 flex flex-col justify-between"
-    >
-        <section class="w-full flex justify-end">
-            <Button
-                isLink={{
-                    href: "/favoritos",
-                    title: "ir a ver los guardados en favoritos",
-                }}
-                variantColor="primary"
-                className="group bg-primary/20! border-primary/40! text-white! hover:bg-primary/30!"
-            >
-                <IcoHeart className="size-4" />
-                <span>Favoritos</span>
-            </Button>
-        </section>
-        <section class="w-full container-window">
+    <article class="row-span-full col-span-2">
+        <div class="size-full container-window">
             <div id="window-image"></div>
             <span id="window"></span>
-        </section>
+        </div>
     </article>
 </section>
 
@@ -83,7 +59,6 @@ import { IcoRickAndMorty, IcoHeart } from "assets/Icons";
         --window-height: 700px;
     }
     .container-window {
-        height: var(--window-height);
         position: relative;
 
         #window-image {

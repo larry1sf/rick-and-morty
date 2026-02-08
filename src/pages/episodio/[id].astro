@@ -28,6 +28,7 @@ const characters = (await fetchApi({
     option: "character",
     id: idsCharacters,
 })) as Character[];
+const { isAuthenticated, userId } = Astro.locals.auth();
 ---
 
 <Layout title={`Episodio: ${episode.name}`}>
@@ -187,7 +188,15 @@ const characters = (await fetchApi({
                 </section>
             </header>
 
-            <ListaCards client:visible cards={characters} option="character" />
+            <ListaCards
+                user={{
+                    isLogin: isAuthenticated,
+                    userId: userId!,
+                }}
+                client:visible
+                cards={characters}
+                option="character"
+            />
         </div>
     </div>
 </Layout>

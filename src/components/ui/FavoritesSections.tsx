@@ -9,10 +9,17 @@ import Pagination from "@components/ui/Pagination";
 import NotFound from "@components/ui/NotFound";
 import { cards } from "@components/cards/PackCards";
 
+interface tUser {
+    isLogin: boolean;
+    userId: string;
+}
+interface PropsFavoritesSections {
+    user: tUser;
+}
 
-export default function WrapperFavoritesSections() {
+export default function WrapperFavoritesSections({ user }: PropsFavoritesSections) {
     return (
-        <FavoritesProvider>
+        <FavoritesProvider user={user} >
             <FavoritesSections />
         </FavoritesProvider>
     )
@@ -45,16 +52,25 @@ function FavoritesSections() {
     });
 
     const isGlobalEmpty = Object.values(filteredData).every(arr => arr.length === 0);
+    const allLoading = Object.values(isLoadingData).every(section => section)
+
+    // Optimización: evitar console.log en producción
+    if (process.env.NODE_ENV === 'development') {
+        console.log('Carga de favoritos:', { allLoading, favoriteData, filteredData });
+    }
 
     const stage: "all" | "unique" | "not found" | "error" =
-        isGlobalEmpty ? "not found" :
-            query.section === "all"
-                ? "all"
-                : query.section.includes("character")
-                    || query.section.includes("location")
-                    || query.section.includes("episode")
-                    ? "unique"
+        query.section === "all"
+            ? "all"
+            : query.section.includes("character")
+                || query.section.includes("location")
+                || query.section.includes("episode")
+                ? "unique"
+                : isGlobalEmpty ? "not found"
                     : "error"
+
+    // Mostrar skeletons iniciales si todas las secciones están cargando
+    const showInitialSkeletons = allLoading && Object.values(favoriteData).every(data => data.length === 0);
 
     if (stage === "error") {
         window.location.href = "/404"
@@ -62,7 +78,7 @@ function FavoritesSections() {
     }
 
     return (
-        <div className="flex flex-col min-h-[70vh] gap-12">
+        <>
             <form
                 onSubmit={(e) => e.preventDefault()}
                 className="flex flex-col md:flex-row sticky top-0 z-60 md:space-y-0 space-y-4 gap-4 py-10! bg-black/75 backdrop-blur-xs lg:gap-y-0"
@@ -90,7 +106,29 @@ function FavoritesSections() {
 
             <section className={`flex flex-col flex-1`}>
                 {
-                    stage === "all" && (
+                    showInitialSkeletons ? (
+                        // Mostrar skeletons iniciales mientras se cargan todos los datos
+                        <>
+                            {["character", "location", "episode"].map((sectionKey) => (
+                                <div key={sectionKey} className="space-y-8">
+                                    <div className="sticky top-30.5 z-50 flex items-center gap-6 backdrop-blur-xs bg-black/75 py-4">
+                                        <h2 className="text-3xl capitalize font-black text-white italic">
+                                            {sections[sectionKey as "character" | "location" | "episode"]}
+                                        </h2>
+                                        <div className="h-px flex-1 bg-gradient-to-r from-primary/50 via-primary/10 to-transparent"></div>
+                                    </div>
+                                    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500 ${cards[sectionKey as "character" | "location" | "episode"].classHeight}`}>
+                                        {Array.from({ length: 6 }).map((_, index) => (
+                                            <div key={`${sectionKey}-${index}`}>
+                                                {cards[sectionKey as "character" | "location" | "episode"].skeleton({ id: index })}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </>
+                    ) : stage === "all" && (
+                        // Carga progresiva: mostrar secciones disponibles mientras otras cargan
                         orderSections?.map((key) => {
                             const sectionKey = key as "character" | "location" | "episode";
                             return (
@@ -98,7 +136,6 @@ function FavoritesSections() {
                                     key={sectionKey}
                                     data={filteredData[sectionKey as keyof typeof filteredData]}
                                     isLoading={isLoadingData[sectionKey as keyof typeof isLoadingData]}
-                                    searchTerm={searchDebounce}
                                     sectionKey={sectionKey}
                                     cards={cards}
                                 />
@@ -107,19 +144,18 @@ function FavoritesSections() {
                     )
                 }
                 {
-                    stage === "unique" && (
+                    !showInitialSkeletons && stage === "unique" && (
                         <FavoriteSectionResults
                             key={query.section}
                             data={filteredData[query.section as keyof typeof filteredData]}
                             isLoading={isLoadingData[query.section as keyof typeof isLoadingData]}
-                            searchTerm={searchDebounce}
                             sectionKey={query.section as "character" | "location" | "episode"}
                             cards={cards}
                         />
                     )
                 }
                 {
-                    stage === "not found" && (
+                    !showInitialSkeletons && stage === "not found" && (
                         <NotFound
                             title="Tu universo está vacío"
                             description="Parece que aún no has guardado nada en tus favoritos. Explora el multiverso y guarda lo que más te guste."
@@ -128,16 +164,15 @@ function FavoritesSections() {
                     )
                 }
             </section>
-        </div>
+        </>
     );
 }
 
-function FavoriteSectionResults({ sectionKey, cards, searchTerm, data, isLoading, items_per_page = 6 }: {
+function FavoriteSectionResults({ sectionKey, cards, data, isLoading, items_per_page = 6 }: {
     sectionKey: 'character' | 'location' | 'episode',
     cards: any,
     data: any[],
     isLoading: boolean,
-    searchTerm: string
     items_per_page?: number;
 }) {
 
@@ -161,6 +196,9 @@ function FavoriteSectionResults({ sectionKey, cards, searchTerm, data, isLoading
         setPage(page - 1);
     };
 
+    // Mostrar skeletons solo si está cargando y no hay datos aún
+    const shouldShowSkeletons = isLoading && data.length === 0;
+
     return (
         <section className="space-y-8">
             <div className="sticky top-30.5 z-50 flex items-center gap-6 backdrop-blur-xs bg-black/75 py-4">
@@ -171,30 +209,29 @@ function FavoriteSectionResults({ sectionKey, cards, searchTerm, data, isLoading
             </div>
 
             {
-                isLoading ? (
+                shouldShowSkeletons ? (
                     <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500 ${cards[sectionKey].classHeight}`}>
                         {Array.from({ length: items_per_page }).map((_, index) => (
                             <div key={index}>
-                                {cards[sectionKey].skeleton}
+                                {cards[sectionKey].skeleton({ id: index })}
                             </div>
                         ))}
                     </div>
+                ) : dataSlice.length === 0 ? (
+                    <div className={`flex items-center justify-center border-2 border-dashed border-white/5 rounded-3xl bg-white/[0.02] ${cards[sectionKey].classHeight}`}>
+                        <div className="text-center p-8">
+                            <IcoNotFound className="size-20 stroke-slate-500/50 mx-auto mb-4 opacity-50" />
+                            <p className="text-slate-500 text-lg font-medium">
+                                No tienes {sections[sectionKey]} guardados aún.
+                            </p>
+                        </div>
+                    </div>
                 ) : (
-                    dataSlice.length <= 0 ? (
-                        <div className={`flex items-center justify-center border-2 border-dashed border-white/5 rounded-3xl bg-white/[0.02] ${cards[sectionKey].classHeight}`}>
-                            <div className="text-center p-8">
-                                <IcoNotFound className="size-20 stroke-slate-500/50 mx-auto mb-4 opacity-50" />
-                                <p className="text-slate-500 text-lg font-medium">
-                                    No tienes {sections[sectionKey]} guardados aún.
-                                </p>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500 ${cards[sectionKey].classHeight}`}>
-                            {dataSlice.map((item) => cards[sectionKey].item(item))}
-                        </div>
-                    )
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500 ${cards[sectionKey].classHeight}`}>
+                        {dataSlice.map((item) => cards[sectionKey].item(item))}
+                    </div>
                 )
+                // )
             }
             {
                 data.length > 0 && (

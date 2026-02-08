@@ -5,32 +5,24 @@ import Layout from "@/layouts/Layout.astro";
 ---
 
 <Layout>
-    <div id="barra-progress"></div>
-    <Landing slot="banner" />
+    <Landing
+        slot="banner"
+        title="Explora el Multiverso"
+        buttonPrincipal="¡Explora Tu Universo!"
+    >
+        <div
+            slot="desc"
+            class="flex flex-col gap-4 text-lg sm:text-xl text-text/90 text-pretty"
+        >
+            <p>
+                Sumérgete en el caótico y fascinante universo de Rick y Morty.
+            </p>
+            <p>
+                Descubre personajes icónicos, localizaciones interdimensionales
+                y aventuras que desafían la lógica.
+            </p>
+        </div>
+    </Landing>
 
     <Main slot="main" />
 </Layout>
-
-<style>
-    #barra-progress {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 100;
-        width: 0%;
-        height: 0.5rem;
-        background: rgb(0, 195, 255);
-
-        animation: progress auto linear;
-        animation-timeline: scroll(root block);
-    }
-
-    @keyframes progress {
-        from {
-            width: 0%;
-        }
-        to {
-            width: 100%;
-        }
-    }
-</style>

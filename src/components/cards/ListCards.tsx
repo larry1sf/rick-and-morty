@@ -9,9 +9,20 @@ interface Props {
     title?: string;
     option: tFiltersOptionSlug
     itemsPerPage?: number;
+    user: {
+        isLogin: boolean;
+        userId: string;
+    };
 }
 
-export default function ListaCards({ cards = [], title = "Registro de Episodios", option, itemsPerPage = 6 }: Props) {
+
+export default function ListaCards({
+    user,
+    cards = [],
+    title = "Registro de Episodios",
+    option,
+    itemsPerPage = 6
+}: Props) {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
 
@@ -37,17 +48,18 @@ export default function ListaCards({ cards = [], title = "Registro de Episodios"
     const hasNext = page < totalPages;
 
     if (option === "all") return (
-        <>
-            <div className="flex items-center gap-4">
-                <h2 className="text-3xl font-black text-white italic">
-                    No soportamos el listado de {option}
-                </h2>
-                <div className="h-px flex-1 bg-gradient-to-r from-primary/50 to-transparent"></div>
-            </div>
-        </>
+        <div className="flex items-center gap-4">
+            <h2 className="text-3xl font-black text-white italic">
+                No soportamos el listado de {option}
+            </h2>
+            <div className="h-px flex-1 bg-gradient-to-r from-primary/50 to-transparent"></div>
+        </div>
     )
     return (
-        <FavoritesProvider>
+        <FavoritesProvider user={{
+            userId: user.userId,
+            isLogin: user.isLogin
+        }}>
             <section className="space-y-8">
                 <div className="flex items-center gap-4">
                     <h2 className="text-3xl font-black text-white italic">
@@ -59,7 +71,7 @@ export default function ListaCards({ cards = [], title = "Registro de Episodios"
                 <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ${renderItem[option as keyof typeof renderItem].classHeight}`}>
                     {loading ? (
                         Array.from({ length: 4 }).map((_, i) => (
-                            renderItem[option as keyof typeof renderItem].skeleton
+                            renderItem[option as keyof typeof renderItem].skeleton({ id: i })
                         ))
                     ) : (
                         paginatedItems?.map((item) => renderItem[option as keyof typeof renderItem].item(item))

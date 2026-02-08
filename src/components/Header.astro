@@ -1,0 +1,175 @@
+---
+import {
+    SignedIn,
+    SignedOut,
+    UserButton,
+    SignInButton,
+    SignUpButton,
+} from "@clerk/astro/components";
+import { IcoHeart, IcoRickAndMorty } from "assets/Icons";
+import Button from "@/components/ui/Button";
+
+const path = Astro.url.pathname;
+const stage = path === "/favoritos" ? "volver" : "ir";
+
+const user = await Astro.locals.currentUser();
+let username = "";
+if (user) {
+    username = user.username || "";
+}
+---
+
+<style>
+    @keyframes spin-slow {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    @keyframes spin-reverse {
+        0% {
+            transform: rotate(360deg);
+        }
+        100% {
+            transform: rotate(0deg);
+        }
+    }
+    @keyframes pulse-glow {
+        0%,
+        100% {
+            transform: scale(1);
+            opacity: 0.8;
+        }
+        50% {
+            transform: scale(1.05);
+            opacity: 0.6;
+        }
+    }
+    .portal-spin-slow {
+        animation: spin-slow 8s linear infinite;
+    }
+    .portal-spin-reverse {
+        animation: spin-reverse 12s linear infinite;
+    }
+    .portal-pulse {
+        animation: pulse-glow 3s ease-in-out infinite;
+    }
+</style>
+
+<header class="w-full h-[10vh] flex gap-4 items-center justify-between pt-6">
+    <a href="/" title="Multiverso de Rick y Morty" class="w-fit">
+        <IcoRickAndMorty title="Rick y Morty" className="h-14" />
+    </a>
+    <nav class="flex gap-4 h-fit">
+        <SignedOut>
+            <SignInButton asChild mode="modal">
+                <Button
+                    variantColor="primary"
+                    className="group bg-primary/20! border-primary/40! text-white! hover:bg-primary/30!"
+                >
+                    <span>Iniciar Sesión</span>
+                </Button>
+            </SignInButton>
+            <SignUpButton asChild mode="modal">
+                <Button
+                    variantColor="primary"
+                    className="group bg-primary/20! border-primary/40! text-white! hover:bg-primary/30!"
+                >
+                    <span>Registrarse</span>
+                </Button>
+            </SignUpButton>
+        </SignedOut>
+
+        <slot name="button-secundario">
+            {
+                stage === "volver" ? (
+                    <Button
+                        slot="button-secundario"
+                        isLink={{
+                            href: "/",
+                            title: "Volver al inicio",
+                        }}
+                        className="group bg-primary/20! border-primary/40! text-white! hover:bg-primary/30!"
+                    >
+                        <span class="flex items-center gap-2">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="size-4 group-hover:-translate-x-1 transition-transform"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                                />
+                            </svg>
+                            Volver al Inicio
+                        </span>
+                    </Button>
+                ) : (
+                    <Button
+                        isLink={{
+                            href: "/favoritos",
+                            title: "ir a ver los guardados en favoritos",
+                        }}
+                        variantColor="primary"
+                        className="group bg-primary/20! border-primary/40! text-white! hover:bg-primary/30!"
+                    >
+                        <IcoHeart className="size-4" />
+                        <span>Favoritos</span>
+                    </Button>
+                )
+            }
+        </slot>
+
+        <SignedIn>
+            <div class="relative group inline-block">
+                <!-- Portal Radiation/Glow with more intense colors -->
+                <div
+                    class="absolute -inset-1 bg-gradient-to-r from-[#97ce4c] via-[#b2df28] to-[#00b5cc] rounded-full blur opacity-60 group-hover:opacity-100 transition duration-500 group-hover:duration-200 animate-tilt"
+                >
+                </div>
+
+                <!-- Portal Container -->
+                <div
+                    class="relative flex items-center justify-center rounded-full bg-black leading-none overflow-hidden ring-1 ring-[#97ce4c]/50 min-w-60 min-h-11"
+                >
+                    <!-- Chaotic Background Layers -->
+                    <!-- Base Swirl -->
+                    <div
+                        class="absolute inset-[-100%] bg-[conic-gradient(from_0deg,#2f5e02_0deg,transparent_60deg,#2f5e02_180deg,transparent_240deg)] animate-[spin_4s_linear_infinite] opacity-60"
+                    >
+                    </div>
+
+                    <!-- Neon Bright Swirl Reverse -->
+                    <div
+                        class="absolute inset-[-100%] bg-[conic-gradient(from_180deg,#97ce4c_0deg,transparent_60deg,#b3ff00_180deg,transparent_240deg)] animate-[spin_3s_linear_infinite_reverse] opacity-80 mix-blend-screen"
+                    >
+                    </div>
+
+                    <!-- Pulse Core -->
+                    <div
+                        class="absolute inset-0 bg-radial-gradient from-[#b3ff00]/20 to-transparent animate-pulse"
+                    >
+                    </div>
+
+                    <!-- Inner Dark Overlay for Text Readability -->
+                    <div
+                        class="absolute inset-[2px] bg-black/80 rounded-full z-0 backdrop-blur-[1px]"
+                    >
+                    </div>
+
+                    <!-- Button Content -->
+                    <div class="relative z-10 rounded-full px-4 py-2">
+                        <UserButton showName />
+                    </div>
+                </div>
+            </div>
+        </SignedIn>
+    </nav>
+</header>

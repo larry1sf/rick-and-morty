@@ -40,10 +40,18 @@ const getLink = (idUrl: string) =>
 const getTitle = (name: string) =>
     name === "unknown" ? "Explorar nuevos horizontes" : `Ir a ${name}`;
 
+const { isAuthenticated, userId } = Astro.locals.auth();
+
 const userLocation = getLink(user?.location.url);
 const userOrigin = getLink(user?.origin.url);
 const userLocationTitle = getTitle(user?.location.name);
 const userOriginTitle = getTitle(user?.origin.name);
+
+const userState = StadoDesconocido(user?.status || "Desconocido");
+const userSpecie = SpedieDesconocida(user?.species || "Desconocido");
+const userGenero = GeneroDesconocido(user?.gender || "Desconocido");
+const userOrigen = Desconocidos(user?.origin.name, "Planeta") || "Desconocido";
+const userLoc = Desconocidos(user?.location.name, "Planeta") || "Desconocido";
 ---
 
 <Layout title={`Personaje: ${user?.name}`}>
@@ -147,11 +155,7 @@ const userOriginTitle = getTitle(user?.origin.name);
                                 <span
                                     class="text-slate-300 text-sm font-black uppercase tracking-widest"
                                 >
-                                    {
-                                        StadoDesconocido(
-                                            user?.status || "Desconocido",
-                                        )
-                                    }
+                                    {userState}
                                 </span>
                             </div>
                             <div
@@ -161,11 +165,7 @@ const userOriginTitle = getTitle(user?.origin.name);
                                 <span
                                     class="text-primary text-sm font-black uppercase tracking-widest"
                                 >
-                                    {
-                                        SpedieDesconocida(
-                                            user?.species || "Desconocido",
-                                        )
-                                    }
+                                    {userSpecie}
                                 </span>
                             </div>
                             <div
@@ -175,11 +175,7 @@ const userOriginTitle = getTitle(user?.origin.name);
                                 <span
                                     class="text-slate-300 text-sm font-black uppercase tracking-widest"
                                 >
-                                    {
-                                        GeneroDesconocido(
-                                            user?.gender || "Desconocido",
-                                        )
-                                    }
+                                    {userGenero}
                                 </span>
                             </div>
                         </section>
@@ -206,10 +202,7 @@ const userOriginTitle = getTitle(user?.origin.name);
                         <p
                             class="text-lg group-hover/stat:text-primary/80 text-white font-bold transition-colors truncate italic block"
                         >
-                            {
-                                Desconocidos(user?.origin.name, "Planeta") ||
-                                    "Desconocido"
-                            }
+                            {userOrigen}
                         </p>
                     </a>
                     <a
@@ -229,10 +222,7 @@ const userOriginTitle = getTitle(user?.origin.name);
                         <p
                             class="text-lg group-hover/stat:text-primary/80 text-white font-bold transition-colors truncate italic block"
                         >
-                            {
-                                Desconocidos(user?.location.name, "Planeta") ||
-                                    "Desconocido"
-                            }
+                            {userLoc}
                         </p>
                     </a>
                     <div
@@ -272,6 +262,10 @@ const userOriginTitle = getTitle(user?.origin.name);
 
             <!-- Episodios Section -->
             <ListaCards
+                user={{
+                    isLogin: isAuthenticated,
+                    userId: userId!,
+                }}
                 client:visible
                 option="episode"
                 cards={Array.isArray(episodes) ? episodes : [episodes]}

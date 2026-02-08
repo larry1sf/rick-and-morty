@@ -1,39 +1,29 @@
 ---
-import HeroFavorites from "@/components/HeroFavorites.astro";
 import Layout from "@/layouts/Layout.astro";
 import FavoritesSections from "@/components/ui/FavoritesSections";
+import Landing from "@/components/Landing.astro";
+const { isAuthenticated, userId } = Astro.locals.auth();
 ---
 
 <Layout>
-    <div id="barra-progress"></div>
-    <HeroFavorites slot="banner" />
+    <Landing
+        slot="banner"
+        title="Tus Favoritos"
+        buttonPrincipal="¡Explora Tu Universo!"
+    >
+        <p slot="desc" class="text-lg sm:text-xl text-text/90 text-pretty">
+            Gestiona y revive tus momentos favoritos con los personajes,
+            localizaciones y episodios que más te apasionan.
+        </p>
+    </Landing>
 
     <div slot="main" class="w-full">
         <div class="pt-6" id="explorar"></div>
-        <FavoritesSections client:load />
+        <div class="flex flex-col min-h-[70vh] gap-12">
+            <FavoritesSections
+                client:load
+                user={{ isLogin: isAuthenticated, userId: userId! }}
+            />
+        </div>
     </div>
 </Layout>
-
-<style>
-    #barra-progress {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 100;
-        width: 0%;
-        height: 0.5rem;
-        background: rgb(0, 195, 255);
-
-        animation: progress auto linear;
-        animation-timeline: scroll(root block);
-    }
-
-    @keyframes progress {
-        from {
-            width: 0%;
-        }
-        to {
-            width: 100%;
-        }
-    }
-</style>

@@ -1,6 +1,6 @@
 ---
 import { fetchApi } from "@/services/gets";
-import Sections from "@/components/ui/HomeSections";
+import HomeSections from "@/components/ui/HomeSections";
 let dataInitial = {
     character: {
         results: [],
@@ -49,9 +49,14 @@ try {
 } catch (error) {
     console.error("Error al cargar los datos iniciales del Main", error);
 }
+const { isAuthenticated, userId } = Astro.locals.auth();
 ---
 
-<div class="w-full">
-    <div class="pt-6" id="explorar"></div>
-    <Sections dataInitial={dataInitial} client:load />
-</div>
+<HomeSections
+    dataInitial={dataInitial}
+    user={{
+        isLogin: isAuthenticated,
+        userId: userId!,
+    }}
+    client:load
+/>
