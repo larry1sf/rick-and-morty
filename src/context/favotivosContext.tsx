@@ -31,15 +31,15 @@ export function FavoritesProvider({ children, user }: { children: React.ReactNod
         location: true,
         episode: true
     })
-    // pedir los datos de los favoritos y guardarlos en el estado
+    // helper pedir los datos de los favoritos y guardarlos en el estado
     const fetchFavoriteData = useCallback(async (key: "character" | "location" | "episode", ids: string[]) => {
         if (ids.length === 0) {
+            setIsLoadingData(prev => ({ ...prev, [key]: false }));
             setFavoriteData(prev => ({ ...prev, [key]: [] }));
             return;
         }
 
         setIsLoadingData(prev => ({ ...prev, [key]: true }));
-
         try {
             const res = await fetchApi({
                 option: key,
@@ -61,8 +61,8 @@ export function FavoritesProvider({ children, user }: { children: React.ReactNod
         }
     }, []);
 
-    // traer los datos de los favoritos de la base de datos
-    const fetchFavoriteDataFromDatabase = useCallback(async (key: "character" | "location" | "episode") => {
+    // helper traer los datos de los favoritos de la base de datos
+    const fetchFavoriteDataFromDatabase = useCallback(async (key: "character" | "location" | "episode", userId: string) => {
         setIsLoadingData(prev => ({ ...prev, [key]: true }));
 
         try {
@@ -93,8 +93,37 @@ export function FavoritesProvider({ children, user }: { children: React.ReactNod
         }
     }, []);
 
-    // eliminar los datos de los favoritos de la base de datos
-    const deleteFavoriteDataFromDatabase = useCallback((key: "character" | "location" | "episode", id: number) => {
+    // helper para obtener los favoritos del local storages
+    const getAllFavoritesFromStorages = useCallback(() => {
+        const storage = localStorage.getItem("rick-and-morty-favoriteIds");
+        if (storage) {
+            const { character, location, episode } = JSON.parse(storage);
+            return { character, location, episode };
+        }
+        return { character: [], location: [], episode: [] };
+    }, [])
+
+    // helper para guardar los favoritos en la base de datos
+    const saveFavoritesToDatabase = useCallback(async ({ registers, section, userId }: { registers: number[], section: "character" | "location" | "episode", userId: string }) => {
+        fetch("api/favorites", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                registers,
+                section,
+                userId
+            })
+        })
+            .then(res => res.json())
+            .catch(err => {
+                console.error(`Error al guardar los datos de los favoritos:`, err);
+            })
+    }, [])
+
+    // helper eliminar los datos de los favoritos de la base de datos
+    const deleteFavoriteDataFromDatabase = useCallback((key: "character" | "location" | "episode", id: number, userId: string) => {
         fetch("/api/favorites", {
             method: "DELETE",
             headers: {
@@ -112,24 +141,31 @@ export function FavoritesProvider({ children, user }: { children: React.ReactNod
             })
     }, []);
 
-    // eliminar un favorito
-    const deleteUsuario = useCallback((id: number, section: "character" | "location" | "episode") => {
+    // helper para eliminar todos los registros del local storage
+    const deleteAllFromStorage = useCallback(() => {
+        localStorage.removeItem("rick-and-morty-favoriteIds")
+    }, [])
+
+    // helper eliminar un favorito
+    const deleteUsuario = useCallback((id: number, section: "character" | "location" | "episode", userId: string) => {
         setFavoriteData(prev => {
             const updated = {
                 ...prev,
                 [section]: prev[section].filter(fav => fav.id !== id)
             };
-            const numFavoritos = prev.character.length + prev.location.length + prev.episode.length;
-            if (isLogin && numFavoritos > 10) {
-                deleteFavoriteDataFromDatabase(section, id);
+
+            // const numFavoritos = prev.character.length + prev.location.length + prev.episode.length;
+            if (isLogin) {
+                deleteFavoriteDataFromDatabase(section, id, userId);
                 return updated
             }
-            const storage = localStorage.getItem("rick-and-morty-favoriteIds");
-            if (storage) {
-                const lc = JSON.parse(storage);
+
+            const storage = getAllFavoritesFromStorages();
+            const existS = Object.values(storage).some(s => s.length)
+            if (existS) {
                 const updatedIds = {
-                    ...lc,
-                    [section]: (lc[section] || []).filter((favId: number) => favId !== id)
+                    ...storage,
+                    [section]: (storage[section] || []).filter((favId: number) => favId !== id)
                 };
                 localStorage.setItem("rick-and-morty-favoriteIds", JSON.stringify(updatedIds));
             }
@@ -138,139 +174,83 @@ export function FavoritesProvider({ children, user }: { children: React.ReactNod
     }, []);
 
     // agregar un favorito
-    const setUsuario = useCallback((item: any, section: "character" | "location" | "episode") => {
-
-        const getAllFavoritesFromStorages = () => {
-            const storage = localStorage.getItem("rick-and-morty-favoriteIds");
-            if (storage) {
-                const { character, location, episode } = JSON.parse(storage);
-                return { character, location, episode };
-            }
-            return { character: [], location: [], episode: [] };
-        }
-
-        const saveFavoritesToDatabase = async ({ registers, section }: { registers: number[], section: "character" | "location" | "episode" }) => {
-            fetch("api/favorites", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    registers,
-                    section,
-                    userId
-                })
-            })
-                .then(res => res.json())
-                .catch(err => {
-                    console.error(`Error al guardar los datos de los favoritos:`, err);
-                })
-        }
+    const setUsuario = useCallback((item: any, section: "character" | "location" | "episode", userId: string) => {
         setFavoriteData(prev => {
             const exist = prev[section].some(fav => fav.id === item.id);
-            const totalFavoritos = prev.character.length + prev.location.length + prev.episode.length;
             if (exist) return prev
-            // si el usuario no esta logeado y llego al limite de 10 favoritos
-            if (totalFavoritos >= 10) {
-                if (!isLogin) {
-                    openDialog({
-                        title: "Limite de favoritos alcanzado",
-                        children: "Llegaste al limite de los favoritos, para agregar mas deberas iniciar sesion.",
-                        confirmText: "Iniciar sesion",
-                        onConfirm: () => {
-                            closeDialog()
-                        }
-                    })
-                    // antFavoriteData.current = JSON.stringify(prev);
-                    return prev
-                }
-                // si el usuario esta logeado y llego al limite de 10 favoritos
 
-                // buscar todos los favoritos anterios del localstorages
-                const allFavorites = getAllFavoritesFromStorages();
-                const newAllFavorites = {
-                    ...allFavorites,
-                    [section]: [...allFavorites[section], item.id]
-                }
-
-                // guardar los favoritos en la base de datos
-                Object.entries(newAllFavorites).forEach(async ([key, value]) => {
-                    await saveFavoritesToDatabase({
-                        registers: value,
-                        section: key as "character" | "location" | "episode"
-                    })
-                })
-
-                // eliminar los favoritos del localstorages
-                localStorage.removeItem("rick-and-morty-favoriteIds");
-
-                // agregar el nuevo favorito
-                const newFavorite = {
-                    ...prev,
-                    [section]: [...prev[section], item]
-                }
-                // antFavoriteData.current = JSON.stringify(newFavorite);
-                // actualizar el estado
-                return newFavorite
-            };
-            // usuarios no logeados tienen un limite de 10 favoritos
-            const storage = localStorage.getItem("rick-and-morty-favoriteIds");
-            const lc = storage
-                ? JSON.parse(storage)
-                : { character: [], location: [], episode: [] };
-
-            const updatedIds = {
-                ...lc,
-                [section]: [...(lc[section] || []), item.id]
-            };
-            localStorage.setItem("rick-and-morty-favoriteIds", JSON.stringify(updatedIds));
-
-            const update = {
+            const totalFavoritos = prev.character.length + prev.location.length + prev.episode.length;
+            const newFavorite = {
                 ...prev,
                 [section]: [...prev[section], item]
             }
-            // antFavoriteData.current = JSON.stringify(update);
-            return update;
+            if (isLogin) {
+                saveFavoritesToDatabase({
+                    registers: [item.id],
+                    section,
+                    userId
+                })
+                    .then(res => res)
+                    .catch(err => console.log(err))
+                // actualizar el estado
+                return newFavorite
+            };
+
+            if (totalFavoritos < 10) {
+                const storage = getAllFavoritesFromStorages()
+                const updatedIds = {
+                    ...storage,
+                    [section]: [...(storage[section] || []), item.id]
+                };
+
+                localStorage.setItem("rick-and-morty-favoriteIds", JSON.stringify(updatedIds));
+                return newFavorite;
+            }
+
+            if (totalFavoritos >= 10) {
+                openDialog({
+                    title: "Limite de favoritos alcanzado",
+                    children: "Llegaste al limite de los favoritos, para agregar mas deberas iniciar sesion.",
+                    confirmText: "Iniciar sesion",
+                    onConfirm: () => {
+                        closeDialog()
+                    }
+                })
+            }
+            return prev
         });
     }, []);
 
     // verificar si un favorito existe
-
-    const isFavorite = (section: "character" | "location" | "episode", id: number) => favoriteData?.[section]?.some(fav => fav.id === id)
+    const isFavorite = useCallback((section: "character" | "location" | "episode", id: number) => favoriteData?.[section]?.some(fav => fav.id === id), [favoriteData])
 
     // manejar los favoritos
-    const handleFavorite = (section: "character" | "location" | "episode", item: Character | Location | Episode) => {
+    const handleFavorite = useCallback((section: "character" | "location" | "episode", item: Character | Location | Episode) => {
         if (isFavorite(section, item.id))
-            deleteUsuario(item.id, section);
+            deleteUsuario(item.id, section, userId);
         else
-            setUsuario(item, section);
-    }
+            setUsuario(item, section, userId);
+    }, [userId, deleteUsuario, setUsuario, isFavorite])
 
     // pedir los datos de los favoritos al iniciar
     useEffect(() => {
-        // Cargar datos iniciales inmediatamente para mostrar skeletons
-        const initialData = {
-            character: [],
-            location: [],
-            episode: []
-        };
-        setFavoriteData(initialData);
-
         if (isLogin) {
             // Carga paralela de las tres secciones
             Promise.all([
-                fetchFavoriteDataFromDatabase("character"),
-                fetchFavoriteDataFromDatabase("location"),
-                fetchFavoriteDataFromDatabase("episode")
+                fetchFavoriteDataFromDatabase("character", userId),
+                fetchFavoriteDataFromDatabase("location", userId),
+                fetchFavoriteDataFromDatabase("episode", userId)
             ]).catch(err => {
                 console.error("Error en carga paralela de favoritos:", err);
             });
             return
         }
 
-        const storage = localStorage.getItem("rick-and-morty-favoriteIds");
-        if (storage) {
-            const { character, location, episode } = JSON.parse(storage);
+        const storage = getAllFavoritesFromStorages();
+        const existStorage = Object.values(storage).some(section => section.length)
+
+        if (existStorage) {
+            const { character, location, episode } = storage;
             // Carga paralela de datos desde localStorage
             Promise.all([
                 fetchFavoriteData("character", character),
@@ -279,9 +259,54 @@ export function FavoritesProvider({ children, user }: { children: React.ReactNod
             ]).catch(err => {
                 console.error("Error en carga paralela desde localStorage:", err);
             });
-        }
+        } else
+            setIsLoadingData({ character: false, episode: false, location: false })
+
 
     }, [isLogin, userId])
+
+    // cuando cambio de sesion si tengo elemento en el storage los traspaso si el usuario quiere
+    useEffect(() => {
+        if (isLogin) {
+            const storage = getAllFavoritesFromStorages()
+            const existStorage = Object.values(storage).some(s => s.length)
+
+            if (existStorage) {
+                openDialog({
+                    title: "Tienes favoritos seleccionados",
+                    children: "Quieres guardarlos en la nube? si no, se eliminaran para siempre.",
+                    confirmText: "Guardar Ahora",
+
+                    onConfirm: () => {
+                        // guardar los favoritos en la base de datos
+                        Object.entries(storage).forEach(async ([key, value]) => {
+                            await saveFavoritesToDatabase({
+                                registers: value,
+                                section: key as "character" | "location" | "episode",
+                                userId
+                            })
+                        })
+
+                        // busque los guardalos en el storage para mostrarlos
+                        const { character, location, episode } = storage
+                        Promise.all([
+                            fetchFavoriteData("character", character),
+                            fetchFavoriteData("location", location),
+                            fetchFavoriteData("episode", episode)
+                        ]).catch(err => {
+                            console.error("Error en carga paralela desde localStorage:", err);
+                        });
+
+                        closeDialog()
+                        return
+                    }
+                })
+                // eliminar los favoritos del localstorages
+                deleteAllFromStorage()
+
+            }
+        }
+    }, [isLogin])
 
     return (
         <FavoritesContext value={{

@@ -21,7 +21,7 @@ const { isAuthenticated, userId } = Astro.locals.auth();
         <div class="pt-6" id="explorar"></div>
         <div class="flex flex-col min-h-[70vh] gap-12">
             <FavoritesSections
-                client:load
+                client:visible
                 user={{ isLogin: isAuthenticated, userId: userId! }}
             />
         </div>

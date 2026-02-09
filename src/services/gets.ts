@@ -50,8 +50,9 @@ export async function fetchApi({
     // Añadimos la opción al resultado para facilitar el filtrado posterior
     if (data && typeof data === 'object') {
       data._option = optionSearch;
+      return data;
     }
-    return data;
+    return null
   } catch (error) {
     console.error("Connection Error:", error);
     return null;

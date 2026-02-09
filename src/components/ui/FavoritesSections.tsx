@@ -1,5 +1,5 @@
 import { IcoLupa, IcoNotFound } from "assets/Icons";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Button from "@components/ui/Button";
 import FilterGroup from "@components/ui/FilterGroup";
 import { sections } from "@/const/constantes";
@@ -31,7 +31,7 @@ function FavoritesSections() {
         section: "all",
     });
 
-    const searchDebounce = useDebounce(query.name, 500);
+    const searchDebounce = useDebounce(query.name, 300);
 
     const handleSectionChange = (section: string) => {
         setQuery(prev => ({ ...prev, section }));
@@ -51,26 +51,19 @@ function FavoritesSections() {
         return filteredData[b].length - filteredData[a].length;
     });
 
-    const isGlobalEmpty = Object.values(filteredData).every(arr => arr.length === 0);
-    const allLoading = Object.values(isLoadingData).every(section => section)
-
-    // Optimización: evitar console.log en producción
-    if (process.env.NODE_ENV === 'development') {
-        console.log('Carga de favoritos:', { allLoading, favoriteData, filteredData });
-    }
+    const isGlobalEmpty = Object.values(filteredData).every(arr => arr.length === 0) && !Object.values(isLoadingData).some(section => section);
 
     const stage: "all" | "unique" | "not found" | "error" =
-        query.section === "all"
+        query.section === "all" && !isGlobalEmpty
             ? "all"
-            : query.section.includes("character")
+            : (
+                query.section.includes("character")
                 || query.section.includes("location")
                 || query.section.includes("episode")
+            ) && !isGlobalEmpty
                 ? "unique"
                 : isGlobalEmpty ? "not found"
                     : "error"
-
-    // Mostrar skeletons iniciales si todas las secciones están cargando
-    const showInitialSkeletons = allLoading && Object.values(favoriteData).every(data => data.length === 0);
 
     if (stage === "error") {
         window.location.href = "/404"
@@ -106,29 +99,7 @@ function FavoritesSections() {
 
             <section className={`flex flex-col flex-1`}>
                 {
-                    showInitialSkeletons ? (
-                        // Mostrar skeletons iniciales mientras se cargan todos los datos
-                        <>
-                            {["character", "location", "episode"].map((sectionKey) => (
-                                <div key={sectionKey} className="space-y-8">
-                                    <div className="sticky top-30.5 z-50 flex items-center gap-6 backdrop-blur-xs bg-black/75 py-4">
-                                        <h2 className="text-3xl capitalize font-black text-white italic">
-                                            {sections[sectionKey as "character" | "location" | "episode"]}
-                                        </h2>
-                                        <div className="h-px flex-1 bg-gradient-to-r from-primary/50 via-primary/10 to-transparent"></div>
-                                    </div>
-                                    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500 ${cards[sectionKey as "character" | "location" | "episode"].classHeight}`}>
-                                        {Array.from({ length: 6 }).map((_, index) => (
-                                            <div key={`${sectionKey}-${index}`}>
-                                                {cards[sectionKey as "character" | "location" | "episode"].skeleton({ id: index })}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </>
-                    ) : stage === "all" && (
-                        // Carga progresiva: mostrar secciones disponibles mientras otras cargan
+                    stage === "all" && (
                         orderSections?.map((key) => {
                             const sectionKey = key as "character" | "location" | "episode";
                             return (
@@ -144,7 +115,7 @@ function FavoritesSections() {
                     )
                 }
                 {
-                    !showInitialSkeletons && stage === "unique" && (
+                    stage === "unique" && (
                         <FavoriteSectionResults
                             key={query.section}
                             data={filteredData[query.section as keyof typeof filteredData]}
@@ -155,7 +126,7 @@ function FavoritesSections() {
                     )
                 }
                 {
-                    !showInitialSkeletons && stage === "not found" && (
+                    stage === "not found" && (
                         <NotFound
                             title="Tu universo está vacío"
                             description="Parece que aún no has guardado nada en tus favoritos. Explora el multiverso y guarda lo que más te guste."
@@ -231,7 +202,6 @@ function FavoriteSectionResults({ sectionKey, cards, data, isLoading, items_per_
                         {dataSlice.map((item) => cards[sectionKey].item(item))}
                     </div>
                 )
-                // )
             }
             {
                 data.length > 0 && (

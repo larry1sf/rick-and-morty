@@ -8,10 +8,16 @@ function saveFavoritesRows({ registers, section, userId }: {
     if (!Array.isArray(registers) || !section) return;
 
     registers.forEach(async (register) => {
-        await turso.execute({
-            sql: `INSERT OR IGNORE INTO favorites (user_id,target_type,target_id) VALUES (?,?,?);`,
+        const { rows } = await turso.execute({
+            sql: "SELECT * FROM favorites WHERE user_id = ? AND target_type = ? AND target_id = ?",
             args: [userId, section, register]
         })
+
+        if (rows.length <= 0)
+            await turso.execute({
+                sql: `INSERT OR IGNORE INTO favorites (user_id,target_type,target_id) VALUES (?,?,?);`,
+                args: [userId, section, register]
+            })
     })
 }
 
